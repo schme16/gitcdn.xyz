@@ -23,19 +23,19 @@ app.use(cors());
 app.get('/cdn/*', function (req, res) {
     var t = req.path.substr(4)
     var url = 'https://raw.githubusercontent.com' + t;
-        res.setHeader('Content-Type', mime.lookup(url));
+/*        res.setHeader('Content-Type', mime.lookup(url));
     options.url = url;
     request.get(options, function (err, r, rawBody) {
         res.send(rawBody);
-    })
-    /*
+    })*/
+
     req.pipe(http.request(url, function(newRes) {
+        res.setHeader('Content-Type', mime.lookup(url));
         newRes.pipe(res);
     }).on('error', function(err) {
         res.statusCode = 500;
         res.end();
     }));
-*/
 
 
 });
