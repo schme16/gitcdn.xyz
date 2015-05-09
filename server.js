@@ -20,7 +20,7 @@ options = {
 
 app.use(cors());
 
-app.get('/raw/*', function (req, res) {
+app.get('/cdn/*', function (req, res) {
     var t = req.path.substr(4)
     var url = 'https://raw.githubusercontent.com' + t;
         res.setHeader('Content-Type', mime.lookup(url));
@@ -41,10 +41,8 @@ app.get('/raw/*', function (req, res) {
 });
 
 
-
-
-app.get('/cdn/*', function (req, res) {
-    var t = req.path.substr(5)
+app.get('/repo/*', function (req, res) {
+    var t = req.path.substr(6)
         raw = t.split('/'),
         user = raw.shift(),
         repo = raw.shift(),
@@ -66,7 +64,7 @@ app.get('/cdn/*', function (req, res) {
             }
 
             if (body) {
-                var newUrl = '/raw/' + user + '/' + repo + '/' +  body.sha + '/' + filePath;
+                var newUrl = '/cdn/' + user + '/' + repo + '/' +  body.sha + '/' + filePath;
                 res.redirect(301, newUrl)
                 //res.send(newUrl)
             }
@@ -79,6 +77,9 @@ app.get('/cdn/*', function (req, res) {
         }
     })
 })
+
+app.use('/', express.static(process.cwd() + '/website'))
+
 
 
 app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP);
