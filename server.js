@@ -65,6 +65,7 @@ app.get('/repo/*', function (req, res) {
 
             if (body) {
                 var newUrl = '/cdn/' + user + '/' + repo + '/' +  body.sha + '/' + filePath;
+                res.setHeader('Content-Type', mime.lookup(newUrl));
                 res.redirect(301, newUrl)
                 //res.send(newUrl)
             }
