@@ -8,7 +8,6 @@
         REGEX_RAW_URL  = /^(https?):\/\/(?:gist|raw)\.github(?:usercontent)?\.com\/([^\/]+\/[^\/]+\/[^\/]+|[0-9A-Za-z-]+\/[0-9a-f]+\/raw)\/(.+)/i,
         REGEX_REPO_URL = /^(https?):\/\/github\.com\/(.+?)\/(.+?)\/(?:(?:blob|raw)\/)?(.+?\/.+)/i,
         devEl  = document.getElementById('url-dev'),
-        urlEl  = document.getElementById('url');
 
     urlEl.addEventListener('input', function () {
         var url = decodeURIComponent(urlEl.value.trim());
@@ -18,10 +17,8 @@
             urlEl.classList.add('valid');
 
             devEl.value  = encodeURI(url.replace(REGEX_RAW_URL, '$1://' + devDomain + '/$2/$3'));
-            prodEl.value = encodeURI(url.replace(REGEX_RAW_URL, '$1://' + cdnDomain + '/$2/$3'));
 
             devEl.classList.add('valid');
-            prodEl.classList.add('valid');
         } /*else if (REGEX_REPO_URL.test(url)) {
             urlEl.classList.remove('invalid');
             urlEl.classList.add('valid');
@@ -50,7 +47,6 @@
             }
 
             devEl.value  = '';
-            prodEl.value = '';
 
             devEl.classList.remove('valid');
         }
