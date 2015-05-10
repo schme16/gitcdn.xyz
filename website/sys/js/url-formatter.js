@@ -8,7 +8,6 @@
         REGEX_RAW_URL  = /^(https?):\/\/(?:gist|raw)\.github(?:usercontent)?\.com\/([^\/]+\/[^\/]+\/[^\/]+|[0-9A-Za-z-]+\/[0-9a-f]+\/raw)\/(.+)/i,
         REGEX_REPO_URL = /^(https?):\/\/github\.com\/(.+?)\/(.+?)\/(?:(?:blob|raw)\/)?(.+?\/.+)/i,
         devEl  = document.getElementById('url-dev'),
-        prodEl = document.getElementById('url-prod'),
         urlEl  = document.getElementById('url');
 
     urlEl.addEventListener('input', function () {
@@ -54,12 +53,10 @@
             prodEl.value = '';
 
             devEl.classList.remove('valid');
-            prodEl.classList.remove('valid');
         }
     }, false);
 
     devEl.addEventListener('focus', onFocus);
-    prodEl.addEventListener('focus', onFocus);
 
     function onFocus(e) {
         setTimeout(function () {
