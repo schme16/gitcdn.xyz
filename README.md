@@ -5,6 +5,9 @@ A CDN for raw.githubusercontent.com content, that always links to the latest ver
 [![wercker status](https://app.wercker.com/status/3bd39472bd17b07fe55170316d6a8fbf/m "wercker status")](https://app.wercker.com/project/bykey/3bd39472bd17b07fe55170316d6a8fbf)
 
 ##How to use
+* Visit: https://gitcdn.xyz and paste your raw GitHub link into the field
+
+**or**
 1. Get the https://raw.githubusercontent.com address for the file you're looking for, it is in the following format: `https://raw.githubusercontent.com/USER/PROJECT/COMMIT/FILE`
 **Example:** `https://raw.githubusercontent.com/schme16/gitcdn.xyz/master/README.md`
 
@@ -33,7 +36,7 @@ See point #2 in the [How to use](#how-to-use) section above. But basically you j
 
 ##Can I manually flush the cache?
 No.
-Whilest theoretically an API could be added to allow you to request a cache flush of your item, the current implimentation of cacheing via a redirect page that only caches for ~2 hours makes the nessecity of this lower, but the server load exponentially higher. Feel free to still add submit it as a feature request/pull request
+Whilest theoretically an API could be added to allow you to request a cache flush of your item, the current implimentation of cacheing via a redirect page that only caches for ~2 hours makes the nessecity of this lower, but the server load exponentially higher. Feel free to still [submit it as a feature request/pull request](https://github.com/schme16/gitcdn.xyz/issues/new)
 
 
 ##How is this Different from [RawGit.com](https://rawgit.com)

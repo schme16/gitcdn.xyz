@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<meta name="description" content="GitCDN.xyz serves raw files directly from GitHub with proper Content-Type headers and super fast .">
+	<link rel="stylesheet" href="sys/css/base.css">
+	<script src="sys/js/url-formatter.js"></script>
+	<title>GitCDN</title>
+</head>
+
+<body>
+	<div class="bd">
+	    <div class="content">
+	        <p class="hero">
+				<strong>GitCDN</strong> serves raw files directly from GitHub with proper <strong>Content-Type</strong> headers.
+			</p>
+
+			<div class="pure-g-r url-helper">
+			    <div class="pure-u-1">
+			        <p id="url-form">
+			            <label for="url" class="offscreen">GitHub URL:</label>
+			            <input id="url" class="url" type="url" placeholder="Paste a link to a raw GitHub file" autofocus>
+			        </p>
+			    </div>
+
+			    <div class="column pure-u-1-1">
+			        <h2>Use this URL to always get the latest commit</h2>
+
+			        <p>
+			        <input id="url-dev" class="url" placeholder="https://GitCDN.com/repo/user/repo/master/file" readonly>
+			        </p>
+
+			    </div>
+			</div>
+	    </div>
+
+	<footer class="ft">
+	    <p>
+	    	&copy; 2015 <a href="http://twitter.com/schme16">@schme16</a>. Special thanks to <a href="http://wonko.com/">Ryan Grove</a> for RawGit!
+	    </p>
+	</footer>
+</body>
+</html>
