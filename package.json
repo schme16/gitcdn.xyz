@@ -27,6 +27,7 @@
     "request": "^2.55.0",
     "cors": "^2.6.0",
     "pm2": "latest",
+    "pmx": "latest",
     "mime": "^1.3.4"
   },
   "devDependencies": {},

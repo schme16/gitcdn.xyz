@@ -1,5 +1,10 @@
 #!/bin/env node
 
+//get http data 
+pmx = require('pmx');
+pmx.init();
+
+
 express = require('express');
 fs = require('fs');
 app = express();
@@ -8,9 +13,9 @@ cors = require('cors');
 http = require('https');
 mime = require('mime');
 options = {
-  headers: {
-    'User-Agent': 'request'
-  }
+    headers: {
+        'User-Agent': 'request'
+    }
 };
 
 
@@ -23,7 +28,7 @@ app.use(cors());
 app.get('/cdn/*', function (req, res) {
     var t = req.path.substr(4)
     var url = 'https://raw.githubusercontent.com' + t;
-/*        res.setHeader('Content-Type', mime.lookup(url));
+    /*        res.setHeader('Content-Type', mime.lookup(url));
     options.url = url;
     request.get(options, function (err, r, rawBody) {
         res.send(rawBody);
@@ -36,8 +41,6 @@ app.get('/cdn/*', function (req, res) {
         res.statusCode = 500;
         res.end();
     }));
-
-
 });
 
 
@@ -82,5 +85,6 @@ app.get('/repo/*', function (req, res) {
 app.use('/', express.static(process.cwd() + '/website'))
 
 
+app.use(pmx.expressErrorHandler());
 
 app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP);
