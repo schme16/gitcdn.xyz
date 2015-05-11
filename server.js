@@ -1,6 +1,6 @@
 #!/bin/env node
 
-//get http data 
+//Send http data to keymetrics.io
 pmx = require('pmx');
 pmx.init();
 
@@ -84,7 +84,7 @@ app.get('/repo/*', function (req, res) {
 
 app.use('/', express.static(process.cwd() + '/website'))
 
-
+//Send error data to keymetrics.io
 app.use(pmx.expressErrorHandler());
 
 app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP);
