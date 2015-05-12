@@ -21,7 +21,6 @@ options = {
 
 
 
-//test
 
 app.use(cors());
 
