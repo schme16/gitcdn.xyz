@@ -20,3 +20,4 @@ deploy:
     - script:
         name: my deploy script
         code: curl $HOOK
+
