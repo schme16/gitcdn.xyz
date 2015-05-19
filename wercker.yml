@@ -19,5 +19,5 @@ deploy:
   steps:
     - script:
         name: my deploy script
-        code: echo "asdasd"
+        code: curl $HOOK
 
