@@ -28,7 +28,10 @@
 			        <h2>Use this URL to always get the latest commit</h2>
 
 			        <p>
-			        <input id="url-dev" class="url" placeholder="https://GitCDN.xyz/repo/user/repo/master/file" readonly>
+			        <input id="url-dev" class="url" placeholder="https://GitCDN.xyz/user/repo/master/file" readonly>
+			        <script>
+			        	document.querySelector('[readonly]').placeholder = location.href + document.querySelector('[readonly]').placeholder
+			        </script>
 			        </p>
 
 			    </div>
