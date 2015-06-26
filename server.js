@@ -57,7 +57,6 @@ app.get('/repo/*', function (req, res) {
         repo = raw.shift(),
         branch = raw.shift(),
         filePath = raw.join('/');
-        console.log(user, repo, branch, filePath);
 
     options.url = 'https://api.github.com/repos/' + user + '/' + repo + '/commits/master';
     request.get(options, function (err, r, rawBody) {
@@ -73,7 +72,7 @@ app.get('/repo/*', function (req, res) {
             }
 
             if (body) {
-                var newUrl = '/cdn/' + user + '/' + repo + '/' +  body.sha + '/' + filePath;
+                var newUrl = 'https://gitcdn' + (req.get('host').indexOf('min.gitcdn.xyz') !== -1 ? 'min' : '') + '-17ac.kxcdn.com/cdn/' + user + '/' + repo + '/' +  body.sha + '/' + filePath;
                 res.setHeader('Content-Type', mime.lookup(newUrl));
                 res.redirect(301, newUrl)
                 //res.send(newUrl)

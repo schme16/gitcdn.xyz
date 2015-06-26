@@ -2,8 +2,8 @@
 
     "use strict";
 
-    var cdnDomain = 'GitCDN.xyz/cdn',
-        devDomain = 'GitCDN.xyz/repo',
+    var cdnDomain = location.href.replace('http://', '').replace('https://', '') +'cdn',
+        devDomain = location.href.replace('http://', '').replace('https://', '') + 'repo',
         REGEX_GIST_URL = /^(https?):\/\/gist\.github\.com\/(.+?)\/([^\/]+)/i,
         REGEX_RAW_URL  = /^(https?):\/\/(?:gist|raw)\.github(?:usercontent)?\.com\/([^\/]+\/[^\/]+\/[^\/]+|[0-9A-Za-z-]+\/[0-9a-f]+\/raw)\/(.+)/i,
         REGEX_REPO_URL = /^(https?):\/\/github\.com\/(.+?)\/(.+?)\/(?:(?:blob|raw)\/)?(.+?\/.+)/i,
