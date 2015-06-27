@@ -58,7 +58,6 @@ var lastCall = function (meta, body, req, res, cacheing) {
     }
     else if (!!cacheing) {
         cache[meta.t] = body;
-        console.log(3)
     }
     else {
         res.sendStatus(500)
@@ -76,7 +75,6 @@ app.get('/repo/*', function (req, res) {
         refreshCache = false;
     options.url = 'https://api.github.com/repos/' + meta.user + '/' + meta.repo + '/commits/master';
     if (cache[meta.t]) {
-        console.log(1)
         refreshCache = true;
         lastCall(meta, cache[meta.t], req, res);
     }
@@ -91,13 +89,12 @@ app.get('/repo/*', function (req, res) {
             catch (e) {
                 console.log(e)
             }
-            
-            console.log(2)
+
             lastCall(meta, body, req, res, refreshCache);
-            
+
         }
         else {
-            res.sendStatus(500)
+            if (!refreshCache) res.sendStatus(500)
         }
     })
 })
