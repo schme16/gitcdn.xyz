@@ -27,7 +27,7 @@ options = {
 
 cache = {}
 
-
+app.use('/', express.static(process.cwd() + '/website'))
 
 app.use(cors());
 
@@ -60,7 +60,9 @@ var lastCall = function (meta, body, req, res, cacheing) {
         cache[meta.t] = body;
     }
     else {
-        res.sendStatus(500)
+        if (!cacheing) res.sendStatus(500);
+        var err = new Error('Status 500: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
+        pmx.notify(err);
     }
 }
 
@@ -81,25 +83,24 @@ app.get('/repo/*', function (req, res) {
     request.get(options, function (err, r, rawBody) {
         var body;
         if (rawBody) {
-
-
             try {
                 body = JSON.parse(rawBody);
             }
             catch (e) {
-                console.log(e)
+                var err = new Error(e);
+                pmx.notify(err);
             }
 
             lastCall(meta, body, req, res, refreshCache);
-
         }
         else {
             if (!refreshCache) res.sendStatus(500)
+            var err = new Error('Status 500: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
+            pmx.notify(err);
         }
     })
 })
 
-app.use('/', express.static(process.cwd() + '/website'))
 
 //Send error data to keymetrics.io
 app.use(pmx.expressErrorHandler());
