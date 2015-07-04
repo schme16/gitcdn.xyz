@@ -5,27 +5,6 @@ pmx = require('pmx');
 pmx.init();
 
 
-function store (key, data) {
-    if (typeof key !== "undefined" && key !== false) {
-        if (typeof data !== "undefined" || data === false) {
-            fs.writeFile('store-' + key, JSON.stringify(data), function () {});
-            return data;
-        }
-        else {
-            var d = false;
-            try {
-                d = JSON.parse(fs.readFileSync('store-' + key));
-            }
-            catch(e) {}
-
-            return d
-        }
-    }
-    else {
-        return data || false
-    }
-}
-
 function lastCall (meta, sha, req, res, cacheing) {
     if (sha && !cacheing) {
         var newUrl = 'https://gitcdn' + (req.get('host').indexOf('min.gitcdn.xyz') !== -1 ? 'min' : '') + '-17ac.kxcdn.com/cdn/' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath;
@@ -41,7 +20,7 @@ function lastCall (meta, sha, req, res, cacheing) {
         pmx.notify(err);
     }
 
-    store('cache', cache);
+    fs.writeFile('store-cache', JSON.stringify(cache))
 };
 
 var express = require('express'),
@@ -58,7 +37,11 @@ http = require('https'),
 
 mime = require('mime'),
 
-cache = store('cache', store('cache') || {});
+cache = {};
+try {
+    cache = JSON.parse(fs.readFileSync('store-cache'));
+}
+catch(e) {}
 
 
 app.use('/', express.static(process.cwd() + '/website'))
