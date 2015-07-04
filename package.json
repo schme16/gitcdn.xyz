@@ -1,7 +1,7 @@
 {
-  "name": "OpenShift-Sample-App",
+  "name": "GitCDN",
   "version": "1.0.0",
-  "description": "OpenShift Sample Application",
+  "description": "GitCDN server",
   "keywords": [
     "OpenShift",
     "Node.js",
@@ -33,5 +33,13 @@
   "devDependencies": {},
   "bundleDependencies": [],
   "private": true,
-  "main": "server.js"
+  "main": "server.js",
+
+  "script"          : "server.js",
+  "error_file"        : "err.log",
+  "out_file"        : "out.log",
+  "merge_logs"      : true,
+  "log_date_format" : "YYYY-MM-DD HH:mm Z",
+  "max_memory_restart" : "20M",
+  "ignore_watch" : ["store-cache"]
 }
