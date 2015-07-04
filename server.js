@@ -5,6 +5,45 @@ pmx = require('pmx');
 pmx.init();
 
 
+function store (key, data) {
+    if (typeof key !== "undefined" && key !== false) {
+        if (typeof data !== "undefined" || data === false) {
+            fs.writeFile('store-' + key, JSON.stringify(data), function () {});
+            return data;
+        }
+        else {
+            var d = false;
+            try {
+                d = JSON.parse(fs.readFileSync('store-' + key));
+            }
+            catch(e) {}
+
+            return d
+        }
+    }
+    else {
+        return data || false
+    }
+}
+
+function lastCall (meta, sha, req, res, cacheing) {
+    if (sha && !cacheing) {
+        var newUrl = 'https://gitcdn' + (req.get('host').indexOf('min.gitcdn.xyz') !== -1 ? 'min' : '') + '-17ac.kxcdn.com/cdn/' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath;
+        cache[meta.user + '/' + meta.repo] = sha;
+        res.redirect(301, newUrl)
+    }
+    else if (!!cacheing) {
+        cache[meta.user + '/' + meta.repo] = sha;
+    }
+    else {
+        if (!cacheing) res.sendStatus(500);
+        var err = new Error('Status 500: SHA1 hash is missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath);
+        pmx.notify(err);
+    }
+
+    store('cache', cache);
+};
+
 var express = require('express'),
 
 fs = require('fs'),
@@ -19,26 +58,7 @@ http = require('https'),
 
 mime = require('mime'),
 
-cache = {},
-
-lastCall = function (meta, body, req, res, cacheing) {
-    if (body && !!body.sha && !cacheing) {
-        var newUrl = 'https://gitcdn' + (req.get('host').indexOf('min.gitcdn.xyz') !== -1 ? 'min' : '') + '-17ac.kxcdn.com/cdn/' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath;
-        cache[meta.user + '/' + meta.repo] = body;
-        res.redirect(301, newUrl)
-    }
-    else if (!!cacheing) {
-        cache[meta.user + '/' + meta.repo] = body;
-    }
-    else {
-        if (!cacheing) res.sendStatus(500);
-        var err = new Error('Status 500: Body missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
-        pmx.notify(err);
-    }
-};
-
-
-
+cache = store('cache', store('cache') || {});
 
 
 app.use('/', express.static(process.cwd() + '/website'))
@@ -99,7 +119,12 @@ app.get('/repo/*', function (req, res) {
                     pmx.notify(err);
                 }
 
-                lastCall(meta, body, req, res, refreshCache);
+                if (body && body.sha) lastCall(meta, body.sha, req, res, refreshCache);
+                else{
+                    if (!refreshCache) res.sendStatus(500)
+                    var err = new Error('SHA1 hash is missing in /repo -> request: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
+                    pmx.notify(err);
+                }
             }
             else {
                 if (!refreshCache) res.sendStatus(500)
