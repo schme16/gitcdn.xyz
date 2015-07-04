@@ -5,27 +5,41 @@ pmx = require('pmx');
 pmx.init();
 
 
-express = require('express');
+var express = require('express'),
 
-fs = require('fs');
+fs = require('fs'),
 
-app = express();
+app = express(),
 
-request = require('request');
+request = require('request'),
 
-cors = require('cors');
+cors = require('cors'),
 
-http = require('https');
+http = require('https'),
 
-mime = require('mime');
+mime = require('mime'),
 
-options = {
-    headers: {
-        'User-Agent': 'request'
+cache = {},
+
+lastCall = function (meta, body, req, res, cacheing) {
+    if (body && !!body.sha && !cacheing) {
+        var newUrl = 'https://gitcdn' + (req.get('host').indexOf('min.gitcdn.xyz') !== -1 ? 'min' : '') + '-17ac.kxcdn.com/cdn/' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath;
+        cache[meta.user + '/' + meta.repo] = body;
+        res.redirect(301, newUrl)
+    }
+    else if (!!cacheing) {
+        cache[meta.user + '/' + meta.repo] = body;
+    }
+    else {
+        if (!cacheing) res.sendStatus(500);
+        var err = new Error('Status 500: Body missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
+        pmx.notify(err);
     }
 };
 
-cache = {}
+
+
+
 
 app.use('/', express.static(process.cwd() + '/website'))
 
@@ -47,25 +61,14 @@ app.get('/cdn/*', function (req, res) {
     }));
 });
 
-var lastCall = function (meta, body, req, res, cacheing) {
-    if (body && !cacheing) {
-        var newUrl = 'https://gitcdn' + (req.get('host').indexOf('min.gitcdn.xyz') !== -1 ? 'min' : '') + '-17ac.kxcdn.com/cdn/' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath;
-        cache[meta.t] = body;
-        res.redirect(301, newUrl)
-    }
-    else if (!!cacheing) {
-        cache[meta.t] = body;
-    }
-    else {
-        if (!cacheing) res.sendStatus(500);
-        var err = new Error('Status 500: Body missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
-        pmx.notify(err);
-    }
-}
-
 app.get('/repo/*', function (req, res) {
     var meta = {},
-        refreshCache = false;
+        refreshCache = false,
+        options = {
+            headers: {
+                'User-Agent': 'request'
+            }
+        };
 
     /*Define the meta data*/
         meta.t = req.path.substr(6);
@@ -78,30 +81,37 @@ app.get('/repo/*', function (req, res) {
     /*Set the */
         options.url = 'https://api.github.com/repos/' + meta.user + '/' + meta.repo + '/commits/master';
 
-    if (cache[meta.t]) {
-        refreshCache = true;
-        lastCall(meta, cache[meta.t], req, res);
-    }
-    request.get(options, function (err, r, rawBody) {
-        var body;
-        if (rawBody) {
-            try {
-                body = JSON.parse(rawBody);
+    /*if the repo is cached, just send that back, and update it for next time*/
+        if (cache[meta.user + '/' + meta.repo]) {
+            refreshCache = true;
+            lastCall(meta, cache[meta.user + '/' + meta.repo], req, res);
+        }
+
+    /*Update the repo, and cache it*/
+        request.get(options, function (err, r, rawBody) {
+            var body;
+            if (rawBody) {
+                try {
+                    body = JSON.parse(rawBody);
+                }
+                catch (e) {
+                    var err = new Error(e);
+                    pmx.notify(err);
+                }
+
+                lastCall(meta, body, req, res, refreshCache);
             }
-            catch (e) {
-                var err = new Error(e);
+            else {
+                if (!refreshCache) res.sendStatus(500)
+                var err = new Error('Status 500: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
                 pmx.notify(err);
             }
-
-            lastCall(meta, body, req, res, refreshCache);
-        }
-        else {
-            if (!refreshCache) res.sendStatus(500)
-            var err = new Error('Status 500: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
-            pmx.notify(err);
-        }
-    })
+            meta = null;
+            options = null;
+        })
 })
+
+
 
 
 //Send error data to keymetrics.io
