@@ -4,7 +4,7 @@
 pmx = require('pmx');
 pmx.init();
 
-favicon = require('zlib').gzipSync(fs.readFileSync('website/favicon.ico'))
+favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favicon.ico'))
 
 function lastCall (meta, sha, req, res, cacheing) {
     if (sha && !cacheing) {
