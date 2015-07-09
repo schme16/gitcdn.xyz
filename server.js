@@ -8,7 +8,8 @@ favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favicon.i
 
 function lastCall (meta, sha, req, res, cacheing) {
     if (sha && !cacheing) {
-        var newUrl = req.protocol + '://cdn.gitcdn.xyz/cdn/' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath;
+        console.log(req.protocol)
+        var newUrl = 'https://cdn.gitcdn.xyz/cdn/' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath;
         cache[meta.user + '/' + meta.repo] = sha;
         res.redirect(301, newUrl)
     }
