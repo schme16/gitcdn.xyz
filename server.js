@@ -47,6 +47,14 @@ catch(e) {}
 
 
 
+
+pmx.action('cache:empty', function(reply) {
+    cache = {};
+    fs.writeFile('store-cache', JSON.stringify(cache))
+    reply({success : true});
+});
+
+
 /*Serve the site icon*/
 	app.use('/favicon.ico', function (req, res) {
 		res.setHeader('Content-Encoding', 'gzip');
