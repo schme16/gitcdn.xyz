@@ -9,17 +9,17 @@
         "openshift"
     ],
     "author": {
-        "name": "OpenShift",
-        "email": "ramr@example.org",
-        "url": "http://www.openshift.com/"
+        "name": "GitCDN",
+        "email": "schme16@gmail.com",
+        "url": "https://gitcdn.xyz"
     },
-    "homepage": "http://www.openshift.com/",
+    "homepage": "https://gitcdn.xyz",
     "repository": {
         "type": "git",
-        "url": "https://github.com/openshift/origin-server"
+        "url": "git@github.com:schme16/gitcdn.xyz.git"
     },
     "engines": {
-        "node": ">= 0.6.0",
+        "node": ">= 0.12.6",
         "npm": ">= 1.0.0"
     },
     "dependencies": {

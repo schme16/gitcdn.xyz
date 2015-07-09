@@ -4,6 +4,7 @@
 pmx = require('pmx');
 pmx.init();
 
+favicon = require('zlib').gzipSync(fs.readFileSync('website/favicon.ico'))
 
 function lastCall (meta, sha, req, res, cacheing) {
     if (sha && !cacheing) {
@@ -42,6 +43,15 @@ try {
     cache = JSON.parse(fs.readFileSync('store-cache'));
 }
 catch(e) {}
+
+
+
+/*Serve the site icon*/
+	app.use('/favicon.ico', function (req, res) {
+		res.setHeader('Content-Encoding', 'gzip');
+		res.setHeader('Content-Type', 'image/x-icon');
+		res.send(favicon);
+	})
 
 
 app.use('/', express.static(process.cwd() + '/website'))
