@@ -8,8 +8,7 @@ favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favicon.i
 
 function lastCall (meta, sha, req, res, cacheing) {
     if (sha && !cacheing) {
-        console.log(req.protocol)
-        var newUrl = 'https://cdn.gitcdn.xyz/cdn/' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath;
+        var newUrl = cdnURL + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath;
         cache[meta.user + '/' + meta.repo] = sha;
         res.redirect(301, newUrl)
     }
@@ -39,6 +38,14 @@ http = require('https'),
 
 mime = require('mime'),
 
+rawURL = 'https://raw.githubusercontent.com',
+
+gistURL = 'https://gist.githubusercontent.com',
+
+cdnURL = 'https://cdn.gitcdn.xyz/cdn/',
+
+cdnURL = 'http://localhost:8080/cdn/',
+
 cache = {};
 try {
     cache = JSON.parse(fs.readFileSync('store-cache'));
@@ -56,11 +63,11 @@ pmx.action('cache:empty', function(reply) {
 
 
 /*Serve the site icon*/
-	app.use('/favicon.ico', function (req, res) {
-		res.setHeader('Content-Encoding', 'gzip');
-		res.setHeader('Content-Type', 'image/x-icon');
-		res.send(favicon);
-	})
+app.use('/favicon.ico', function (req, res) {
+	res.setHeader('Content-Encoding', 'gzip');
+	res.setHeader('Content-Type', 'image/x-icon');
+	res.send(favicon);
+})
 
 
 app.use('/', express.static(process.cwd() + '/website'))
@@ -68,11 +75,10 @@ app.use('/', express.static(process.cwd() + '/website'))
 app.use(cors());
 
 app.get('/cdn/*', function (req, res) {
-    var t = req.path.substr(4)
-    var url = 'https://raw.githubusercontent.com' + t;
+    var t = req.path.substr(4);
 
-    req.pipe(http.request(url, function(newRes) {
-        res.setHeader('Content-Type', mime.lookup(url));
+    req.pipe(http.request((t.split('/')[3] === 'raw' ? gistURL : rawURL) + t, function(newRes) {
+        res.setHeader('Content-Type', mime.lookup(t));
         newRes.pipe(res);
     }).on('error', function(err) {
         res.statusCode = 500;
@@ -96,12 +102,15 @@ app.get('/repo/*', function (req, res) {
         meta.t = req.path.substr(6);
         meta.raw = meta.t.split('/');
         meta.user = meta.raw.shift();
-        meta.repo = meta.raw.shift();
+        meta.repo = meta.raw.shift()
+        meta.gist = (meta.raw[0] === 'raw' ? true : false);
+        if (meta.gist)/* meta.repo += */meta.raw.shift();
         meta.branch = meta.raw.shift();
         meta.filePath = meta.raw.join('/');
 
+console.log(meta.repo);
     /*Set the */
-        options.url = 'https://api.github.com/repos/' + meta.user + '/' + meta.repo + '/commits/master';
+        options.url = 'https://api.github.com/' + (meta.gist ? 'gists' : 'repos') + '/' + (meta.gist ? '' : meta.user + '/') + meta.repo + (meta.gist ? '' : '/commits/master');
 
     /*if the repo is cached, just send that back, and update it for next time*/
         if (cache[meta.user + '/' + meta.repo]) {
@@ -120,8 +129,8 @@ app.get('/repo/*', function (req, res) {
                     var err = new Error(e);
                     pmx.notify(err);
                 }
-
-                if (body && body.sha) lastCall(meta, body.sha, req, res, refreshCache);
+                if (meta.gist) meta.repo += '/raw';
+                if (body && (body.sha || (body.history && body.history[0] && body.history[0].version))) lastCall(meta, body.sha || body.history[0].version, req, res, refreshCache);
                 else{
                     if (!refreshCache) res.sendStatus(500)
                     var err = new Error('SHA1 hash is missing in /repo -> request: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
@@ -144,4 +153,4 @@ app.get('/repo/*', function (req, res) {
 //Send error data to keymetrics.io
 app.use(pmx.expressErrorHandler());
 
-app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP);
+app.listen(8080);
