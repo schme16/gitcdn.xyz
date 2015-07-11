@@ -44,7 +44,7 @@ gistURL = 'https://gist.githubusercontent.com',
 
 cdnURL = 'https://cdn.gitcdn.xyz/cdn/',
 
-cdnURL = 'http://localhost:8080/cdn/',
+//cdnURL = 'http://localhost:8080/cdn/',
 
 cache = {};
 try {
