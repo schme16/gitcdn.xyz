@@ -108,7 +108,6 @@ app.get('/repo/*', function (req, res) {
         meta.branch = meta.raw.shift();
         meta.filePath = meta.raw.join('/');
 
-console.log(meta.repo);
     /*Set the */
         options.url = 'https://api.github.com/' + (meta.gist ? 'gists' : 'repos') + '/' + (meta.gist ? '' : meta.user + '/') + meta.repo + (meta.gist ? '' : '/commits/master');
 
@@ -133,7 +132,7 @@ console.log(meta.repo);
                 if (body && (body.sha || (body.history && body.history[0] && body.history[0].version))) lastCall(meta, body.sha || body.history[0].version, req, res, refreshCache);
                 else{
                     if (!refreshCache) res.sendStatus(500)
-                    var err = new Error('SHA1 hash is missing in /repo -> request: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
+                    var err = new Error('SHA1 hash is missing in /repo -> request: ' + req.path);
                     pmx.notify(err);
                 }
             }
