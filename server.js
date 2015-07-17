@@ -52,6 +52,7 @@ try {
 }
 catch(e) {}
 
+var test_string = 'Hello';
 
 
 
@@ -61,6 +62,10 @@ pmx.action('cache:empty', function(reply) {
     reply({success : true});
 });
 
+app.use('/hello', function (request, response) {
+   request = null;
+   response.send(test_string);
+})
 
 /*Serve the site icon*/
 app.use('/favicon.ico', function (req, res) {
@@ -68,6 +73,7 @@ app.use('/favicon.ico', function (req, res) {
 	res.setHeader('Content-Type', 'image/x-icon');
 	res.send(favicon);
 })
+
 
 
 app.use('/', express.static(process.cwd() + '/website'))
@@ -147,6 +153,10 @@ app.get('/repo/*', function (req, res) {
 })
 
 
+
+
+//console.log(global)
+//setInterval(global.gc, 1000)
 
 
 //Send error data to keymetrics.io

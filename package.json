@@ -48,6 +48,7 @@
         "server.js",
         "package.json"
       ],
+      "node-args": "--always-compact --max_old_space_size=20 --nouse-idle-notification",
       "ignore_watch": [
         "store-cache"
       ]
