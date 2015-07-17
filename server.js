@@ -109,7 +109,7 @@ app.get('/repo/*', function (req, res) {
         meta.filePath = meta.raw.join('/');
 
     /*Set the */
-        options.url = 'https://api.github.com/' + (meta.gist ? 'gists' : 'repos') + '/' + (meta.gist ? '' : meta.user + '/') + meta.repo + (meta.gist ? '' : '/commits/master');
+        options.url = 'https://api.github.com/' + (meta.gist ? 'gists' : 'repos') + '/' + (meta.gist ? '' : meta.user + '/') + meta.repo + (meta.gist ? '' : '/commits/master?client_id=1f21f89a93c52a69cfcd&client_secret=3036adac62bee3029424210d8a7cdd85ab79cd36');
 
     /*if the repo is cached, just send that back, and update it for next time*/
         if (cache[meta.user + '/' + meta.repo]) {
