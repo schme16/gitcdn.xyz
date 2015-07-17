@@ -132,7 +132,7 @@ app.get('/repo/*', function (req, res) {
                 if (body && (body.sha || (body.history && body.history[0] && body.history[0].version))) lastCall(meta, body.sha || body.history[0].version, req, res, refreshCache);
                 else{
                     if (!refreshCache) res.sendStatus(500)
-                    var err = new Error('SHA1 hash is missing in /repo -> request: ' + req.path);
+                    var err = new Error('SHA1 hash is missing in /repo -> request: ' + req.path + '; JSON=' + JSON.stringify(body));
                     pmx.notify(err);
                 }
             }
