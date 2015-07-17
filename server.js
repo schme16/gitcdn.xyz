@@ -156,7 +156,7 @@ app.get('/repo/*', function (req, res) {
 
 
 //console.log(global)
-//setInterval(global.gc, 1000)
+setInterval(global.gc, 1000)
 
 
 //Send error data to keymetrics.io

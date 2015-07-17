@@ -43,12 +43,12 @@
       "out_file": "out.log",
       "merge_logs": true,
       "log_date_format": "YYYY-MM-DD HH:mm Z",
-      "max_memory_restart": "150M",
+      "max_memory_restart": "100M",
       "watch": [
         "server.js",
         "package.json"
       ],
-      "node-args": "--always-compact --max_old_space_size=20 --nouse-idle-notification",
+      "node-args": "--always-compact --max_old_space_size=20 --nouse-idle-notification --expose-gc",
       "ignore_watch": [
         "store-cache"
       ]
