@@ -1,86 +1,21 @@
 #!/bin/env node
 
 //Send http data to keymetrics.io
-pmx = require('pmx');
+var pmx = require('pmx');
 pmx.init();
 
 favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favicon.ico'))
 
-function lastCall (meta, sha, req, res, cacheing) {
-    if (sha && !cacheing) {
-        var newUrl = cdnURL + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath;
-        cache[meta.user + '/' + meta.repo] = sha;
-        res.redirect(301, newUrl)
-    }
-    else if (!!cacheing) {
-        cache[meta.user + '/' + meta.repo] = sha;
-    }
-    else {
-        if (!cacheing) res.sendStatus(500);
-        var err = new Error('Status 500: SHA1 hash is missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath);
-        pmx.notify(err);
-    }
 
-    fs.writeFile('store-cache', JSON.stringify(cache))
-};
-
-var express = require('express'),
-
-fs = require('fs'),
-
-app = express(),
-
-request = require('request'),
-
-cors = require('cors'),
-
-http = require('https'),
-
-mime = require('mime'),
-
-rawURL = 'https://raw.githubusercontent.com',
-
-gistURL = 'https://gist.githubusercontent.com',
-
-cdnURL = 'https://cdn.gitcdn.xyz/cdn/',
-
-//cdnURL = 'http://localhost:8080/cdn/',
-
-cache = {};
-try {
-    cache = JSON.parse(fs.readFileSync('store-cache'));
-}
-catch(e) {}
-
-var test_string = 'Hello';
-
-
-
-pmx.action('cache:empty', function(reply) {
-    cache = {};
-    fs.writeFile('store-cache', JSON.stringify(cache))
-    reply({success : true});
-});
-
-app.use('/hello', function (request, response) {
-   request = null;
-   response.send(test_string);
-})
-
-/*Serve the site icon*/
-app.use('/favicon.ico', function (req, res) {
+//Serves the favicon
+function faviconFunc (req, res) {
 	res.setHeader('Content-Encoding', 'gzip');
 	res.setHeader('Content-Type', 'image/x-icon');
 	res.send(favicon);
-})
+}
 
-
-
-app.use('/', express.static(process.cwd() + '/website'))
-
-app.use(cors());
-
-app.get('/cdn/*', function (req, res) {
+//Serves the cdn route
+function cdnFunc(req, res) {
     var t = req.path.substr(4);
 
     req.pipe(http.request((t.split('/')[3] === 'raw' ? gistURL : rawURL) + t, function(newRes) {
@@ -93,9 +28,10 @@ app.get('/cdn/*', function (req, res) {
         var err = new Error('Status 500: couldn\'t pipe file to client || ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
         pmx.notify(err);
     }));
-});
+}
 
-app.get('/repo/*', function (req, res) {
+//Serves the repo route
+function repoFunc (req, res) {
     var meta = {},
         refreshCache = false,
         options = {
@@ -150,7 +86,86 @@ app.get('/repo/*', function (req, res) {
             meta = null;
             options = null;
         })
-})
+}
+
+
+
+
+
+
+function lastCall (meta, sha, req, res, cacheing) {
+    if (sha && !cacheing) {
+        var newUrl = cdnURL + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath;
+        cache[meta.user + '/' + meta.repo] = sha;
+        res.redirect(301, newUrl)
+    }
+    else if (!!cacheing) {
+        cache[meta.user + '/' + meta.repo] = sha;
+    }
+    else {
+        if (!cacheing) res.sendStatus(500);
+        var err = new Error('Status 500: SHA1 hash is missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath);
+        pmx.notify(err);
+    }
+
+    fs.writeFile('store-cache', JSON.stringify(cache))
+};
+
+var express = require('express'),
+
+fs = require('fs'),
+
+app = express(),
+
+request = require('request'),
+
+cors = require('cors')(),
+
+staticContent = express.static(process.cwd() + '/website'),
+
+http = require('https'),
+
+mime = require('mime'),
+
+rawURL = 'https://raw.githubusercontent.com',
+
+gistURL = 'https://gist.githubusercontent.com',
+
+cdnURL = 'https://cdn.gitcdn.xyz/cdn/',
+
+//cdnURL = 'http://localhost:8080/cdn/',
+
+actions = {
+    emptyCache: function emptyCache (reply) {
+        cache = {};
+        fs.writeFile('store-cache', JSON.stringify(cache))
+        reply({success : true});
+    }
+},
+
+cache = {};
+try {
+    cache = JSON.parse(fs.readFileSync('store-cache'));
+}
+catch(e) {}
+
+
+
+
+pmx.action('cache:empty', actions.emptyCache);
+
+
+/*Serve the site icon*/
+app.use('/favicon.ico', faviconFunc)
+
+
+app.use('/', staticContent)
+
+app.use(cors);
+
+app.get('/cdn/*', cdnFunc);
+
+app.get('/repo/*', repoFunc)
 
 
 
