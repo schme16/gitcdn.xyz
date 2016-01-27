@@ -127,7 +127,7 @@ rawURL = 'https://raw.githubusercontent.com',
 
 gistURL = 'https://gist.githubusercontent.com',
 
-cdnURL = 'https://cdn.gitcdn.xyz/cdn/',
+cdnURL = 'https://gitcdn.herokuapp.com/cdn/',
 
 //cdnURL = 'http://localhost:8080/cdn/',
 
