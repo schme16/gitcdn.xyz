@@ -168,4 +168,4 @@ app.get('/repo/*', repoFunc)
 setInterval(global.gc, 15000)
 
 
-app.listen(8080);
+app.listen(process.env.PORT || 8080);
