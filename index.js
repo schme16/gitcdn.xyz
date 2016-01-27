@@ -1,17 +1,14 @@
 #!/bin/env node
 
-//Send http data to keymetrics.io
-var pmx = require('pmx');
-pmx.init();
 
 favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favicon.ico'))
 
 
 //Serves the favicon
 function faviconFunc (req, res) {
-	res.setHeader('Content-Encoding', 'gzip');
-	res.setHeader('Content-Type', 'image/x-icon');
-	res.send(favicon);
+    res.setHeader('Content-Encoding', 'gzip');
+    res.setHeader('Content-Type', 'image/x-icon');
+    res.send(favicon);
 }
 
 //Serves the cdn route
@@ -24,9 +21,8 @@ function cdnFunc(req, res) {
     }).on('error', function(err) {
         res.statusCode = 500;
         res.end();
-
         var err = new Error('Status 500: couldn\'t pipe file to client || ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
-        pmx.notify(err);
+        console.log(err)
     }));
 }
 
@@ -68,20 +64,20 @@ function repoFunc (req, res) {
                 }
                 catch (e) {
                     var err = new Error(e);
-                    pmx.notify(err);
+                    console.log(err)
                 }
                 if (meta.gist) meta.repo += '/raw';
                 if (body && (body.sha || (body.history && body.history[0] && body.history[0].version))) lastCall(meta, body.sha || body.history[0].version, req, res, refreshCache);
                 else{
                     if (!refreshCache) res.sendStatus(500)
                     var err = new Error('SHA1 hash is missing in /repo -> request: ' + req.path + '; JSON=' + JSON.stringify(body));
-                    pmx.notify(err);
+                    console.log(err)
                 }
             }
             else {
                 if (!refreshCache) res.sendStatus(500)
                 var err = new Error('Status 500: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath);
-                pmx.notify(err);
+                console.log(err)
             }
             meta = null;
             options = null;
@@ -105,7 +101,7 @@ function lastCall (meta, sha, req, res, cacheing) {
     else {
         if (!cacheing) res.sendStatus(500);
         var err = new Error('Status 500: SHA1 hash is missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath);
-        pmx.notify(err);
+        console.log(err)
     }
 
     fs.writeFile('store-cache', JSON.stringify(cache))
@@ -152,8 +148,6 @@ catch(e) {}
 
 
 
-pmx.action('cache:empty', actions.emptyCache);
-
 
 /*Serve the site icon*/
 app.use('/favicon.ico', faviconFunc)
@@ -171,10 +165,7 @@ app.get('/repo/*', repoFunc)
 
 
 //console.log(global)
-setInterval(global.gc, 5000)
+setInterval(global.gc, 15000)
 
-
-//Send error data to keymetrics.io
-app.use(pmx.expressErrorHandler());
 
 app.listen(8080);
