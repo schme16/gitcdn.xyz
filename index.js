@@ -127,9 +127,9 @@ rawURL = 'https://raw.githubusercontent.com',
 
 gistURL = 'https://gist.githubusercontent.com',
 
-cdnURL = 'https://gitcdn.herokuapp.com/cdn/',
+cdnURL = 'https://cdn.gitcdn.link/cdn/',
+minURL = 'https://min.gitcdn.link/cdn/',
 
-//cdnURL = 'http://localhost:8080/cdn/',
 
 actions = {
     emptyCache: function emptyCache (reply) {
