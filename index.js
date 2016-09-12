@@ -34,6 +34,7 @@ setInterval(collectGarbage, collectGarbageInterval)
 function createRedirectUrl (headers, meta, sha) {
     let scheme = (headers['cf-visitor'] && headers['cf-visitor'].scheme ? headers['cf-visitor'].scheme : 'https'),
         host = headers.host || cdnURL
+        console.log(headers['cf-visitor'], scheme)
 
     return `${scheme}://${host}/cdn/${meta.user}/${meta.repo}/${sha}/${meta.filePath}`
 }
