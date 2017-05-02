@@ -1,6 +1,6 @@
 {
   "name": "GitCDN",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "GitCDN server",
   "keywords": [
     "OpenShift",

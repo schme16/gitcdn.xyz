@@ -9,14 +9,14 @@ Built on NodeJS for rock solid delivery!
 * Visit: https://gitcdn.xyz and paste your raw GitHub link into the field
 
 **or**
-1. Get the https://raw.githubusercontent.com address for the file you're looking for, it is in the following format: `https://raw.githubusercontent.com/USER/PROJECT/COMMIT/FILE`
+1. Get the https://raw.githubusercontent.com address for the file you're looking for, it is in the following format: `https://raw.githubusercontent.com/USER/PROJECT/BRANCH/FILE`
 **Example:** `https://raw.githubusercontent.com/schme16/gitcdn.xyz/master/README.md`
 
-2. **[Get latest commit]** Replace `https://raw.githubusercontent.com/` with `https://gitcdn.xyz/repo/` and switch the commit from /master/ to your designed commit sha1 **Example:** `https://gitcdn.xyz/repo/schme16/gitcdn.xyz/master/README.md`
+2. **[Get latest commit]** Replace `https://raw.githubusercontent.com/` with `https://gitcdn.xyz/repo/` and switch the commit from /master/ or /{TAG}/ to your designed commit sha1 **Example:** `https://gitcdn.xyz/repo/schme16/gitcdn.xyz/master/README.md` or `https://gitcdn.xyz/repo/schme16/gitcdn.xyz/v1.0.2/README.md`
 **[Get specific commit]** Replace `https://raw.githubusercontent.com/` with `https://gitcdn.xyz/cdn/` **Example:** `https://gitcdn.xyz/cdn/schme16/gitcdn.xyz/b5ccbec532d3cfe7eb9dec60b95317654a1be09f/README.md`
 
 ##How much does GitCDN cost?
-GitCDN is TOTALLY FREE! 
+GitCDN is TOTALLY FREE!
 That's not to say I won't have plans that have a monthly/yearly price in the future, but the repo CDN service will ALWAYS be free, without the need for sign-up!
 
 
