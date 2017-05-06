@@ -41,7 +41,7 @@ function createRedirectUrl (headers, meta, sha) {
 
 //Used for debugging during development
 function debugFunc (req, res, next) {
-    
+
     console.log(req.headers)
 
     next()
@@ -95,9 +95,9 @@ function repoFunc (req, res) {
         options.url = 'https://api.github.com/' + (meta.gist ? 'gists' : 'repos') + '/' + (meta.gist ? '' : meta.user + '/') + meta.repo + (meta.gist ? '' : '/commits/' + meta.branch + '?client_id=' + process.env.gitcdn_clientid + '&client_secret=' + process.env.gitcdn_clientsecret)
 
     /*if the repo is cached, just send that back, and update it for next time*/
-        if (cache[meta.user + '/' + meta.repo]) {
+        if (cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)]) {
             refreshCache = true
-            lastCall(meta, cache[meta.user + '/' + meta.repo], req, res)
+            lastCall(meta, cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)], req, res)
         }
 
     /*Update the repo, and cache it*/
@@ -133,11 +133,11 @@ function repoFunc (req, res) {
 function lastCall (meta, sha, req, res, cacheing) {
     if (sha && !cacheing) {
         var newUrl = createRedirectUrl(req.headers, meta, sha)
-        cache[meta.user + '/' + meta.repo] = sha
+        cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)] = sha
         res.redirect(301, newUrl)
     }
     else if (!!cacheing) {
-        cache[meta.user + '/' + meta.repo] = sha
+        cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)] = sha
     }
     else {
         if (!cacheing) res.sendStatus(500)
@@ -166,8 +166,3 @@ app.use(cors)
 app.get('/cdn/*', cdnFunc)
 app.get('/repo/*', repoFunc)
 app.listen(process.env.PORT || 8080)
-
-
-
-
-
