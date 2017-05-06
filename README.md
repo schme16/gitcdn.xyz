@@ -16,7 +16,7 @@ Built on NodeJS for rock solid delivery!
 **[Get specific commit]** Replace `https://raw.githubusercontent.com/` with `https://gitcdn.xyz/cdn/` **Example:** `https://gitcdn.xyz/cdn/schme16/gitcdn.xyz/b5ccbec532d3cfe7eb9dec60b95317654a1be09f/README.md`
 
 ##How much does GitCDN cost?
-GitCDN is TOTALLY FREE! 
+GitCDN is TOTALLY FREE!
 That's not to say I won't have plans that have a monthly/yearly price in the future, but the repo CDN service will ALWAYS be free, without the need for sign-up!
 
 
@@ -42,7 +42,7 @@ Whilst theoretically an API could be added to allow you to request a cache flush
 
 ##How is this Different from [RawGit.com](https://rawgit.com) and [githack.com](https://raw.githack.com/)
 The main difference, is our focus on providing the **latest** commit of a given GitHub file, where as RawGit has more of a focus on providing **specific commits** and githack with efficient serving (they use nginx).
-Each of the services mentioned above are awesome, and I'd like to thank the developers behind each for creating such brilliant services; but both are built with a bit of a glass jaw, that is, that users can either *accidentally*, or worse, **deliberately** cripple their services just through normal usage. My aim was to build GitCDN with a focus on preventing that being available to end users, and we achieve this through clever tweaks on Cloudflare that mean that a most a file will be hard accessed (accessed without a cache copy, directly from my servers) once per region/2hrs.
+Each of the services mentioned above are awesome, and I'd like to thank the developers behind each for creating such brilliant services; but both are built with a bit of a glass jaw, that is, that users can either *accidentally*, or worse, **deliberately** cripple their services just through normal usage. My aim was to build GitCDN with a focus on preventing that being available to end users, and we achieve this through clever tweaks on Cloudflare that mean that at most a file will be hard accessed (accessed without a cache copy, directly from my servers) once per region/2hrs.
 
 Another major difference between GitCDN and RawGit, is what CDN providers I use:
  - GitCDN uses [Cloudflare](https://cloudflare.com).
