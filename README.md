@@ -6,7 +6,7 @@ Built on NodeJS for rock solid delivery!
 [![wercker status](https://app.wercker.com/status/3bd39472bd17b07fe55170316d6a8fbf/m "wercker status")](https://app.wercker.com/project/bykey/3bd39472bd17b07fe55170316d6a8fbf)
 
 ## How to use
-* Visit: https://gitcdn.xyz and paste your raw GitHub link into the field
+* Visit: https://gitcdn.xyz or https://gitcdn.link and paste your raw GitHub link into the field
 
 **or**
 1. Get the https://raw.githubusercontent.com address for the file you're looking for, it is in the following format: `https://raw.githubusercontent.com/USER/PROJECT/BRANCH/FILE`
