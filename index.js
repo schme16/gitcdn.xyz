@@ -148,7 +148,6 @@ function repoFunc (req, res) {
 
 //Handles redirection and cacheing
 function lastCall (meta, sha, req, res, cacheing) {
-    console.log(44444)
     if (sha && !cacheing) {
         var newUrl = createRedirectUrl(req.headers, meta, sha)
         cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)] = sha
