@@ -17,6 +17,7 @@ var favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
     cdnURL = 'cdn.gitcdn.link',
     cache = {},
     blacklist = [],
+    tempBlacklist = [],
     collectGarbageInterval = 15000
 
 
@@ -93,7 +94,7 @@ function repoFunc (req, res) {
         if (meta.gist) meta.raw.shift()
         meta.branch = meta.raw.shift()
         meta.filePath = meta.raw.join('/')
-    if (blacklist.indexOf(meta.user + '/' + meta.repo) > -1 ) {
+    if (blacklist.indexOf(meta.user + '/' + meta.repo) > -1  || tempBlacklist.indexOf(meta.filePath) > -1) {
         res.status(403).send("Forbidden - This repo/gist is on the blacklist. If you wish to appeal, please open an issue here: https://github.com/schme16/gitcdn.xyz/issues, with why you feel this repo should not be on the blacklist.")
         return false
     }
@@ -129,14 +130,13 @@ function repoFunc (req, res) {
                     else { //Error
                         if (!refreshCache) res.sendStatus(500)
                         console.log("Error: " + 'SHA1 hash is missing in /repo -> request: ' + req.originalUrl + ' JSON=' + JSON.stringify(body))
-                        blacklist.push(meta.user + '/' + meta.repo)
+                        tempBlacklist.push(meta.filePath)//meta.user + '/' + meta.repo)
 
                     }
                 }
                 else { //Error
                     if (!refreshCache) res.sendStatus(500)
                     console.log("Error: " + 'Status 500: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath)
-                    //blacklist.push(meta.user + '/' + meta.repo)
 
                 }
                 meta = null
@@ -159,7 +159,7 @@ function lastCall (meta, sha, req, res, cacheing) {
     else {
         if (!cacheing) res.sendStatus(500)
         console.log("Error: " + 'Status 500: SHA1 hash is missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath)
-       blacklist.push(meta.user + '/' + meta.repo)
+       tempBlacklist.push(meta.filePath)//meta.user + '/' + meta.repo)
     }
 }
 
