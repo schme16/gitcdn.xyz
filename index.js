@@ -16,15 +16,19 @@ var favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
     gistURL = 'https://gist.githubusercontent.com',
     cdnURL = 'cdn.gitcdn.link',
     cache = {},
+    blacklist = [],
     collectGarbageInterval = 15000
 
 
 
 //Load the cache file, if it exists
 try {
-    cache = JSON.parse(fs.readFileSync('store-cache'))
+    blacklist = JSON.parse(fs.readFileSync('blacklist.json'))
 }
-catch(e) {}
+catch(e) {
+    console.log("Error: blacklist.json missing")
+}
+
 
 //Start the garbage collection enforcer
 setInterval(collectGarbage, collectGarbageInterval)
@@ -42,7 +46,7 @@ function createRedirectUrl (headers, meta, sha) {
 //Used for debugging during development
 function debugFunc (req, res, next) {
 
-    console.log(req.headers)
+    //console.log(req.headers)
 
     next()
 }
@@ -56,9 +60,8 @@ function faviconFunc (req, res) {
 
 //Serves the cdn route
 function cdnFunc (req, res) {
-
     //Gets the path data
-    let t = req.path.substr(4)
+    let t = req.originalUrl.substr(4)
 
 
     req.pipe(http.request((t.split('/')[3] === 'raw' ? gistURL : rawURL) + t, function(newRes) {
@@ -82,7 +85,7 @@ function repoFunc (req, res) {
         }
 
     /*Define the meta data*/
-        meta.t = req.path.substr(6)
+        meta.t = req.originalUrl.substr(6)
         meta.raw = meta.t.split('/')
         meta.user = meta.raw.shift()
         meta.repo = meta.raw.shift()
@@ -90,47 +93,62 @@ function repoFunc (req, res) {
         if (meta.gist) meta.raw.shift()
         meta.branch = meta.raw.shift()
         meta.filePath = meta.raw.join('/')
+    if (blacklist.indexOf(meta.user + '/' + meta.repo) > -1 ) {
+        res.status(403).send("Forbidden - This repo/gist is on the blacklist. If you wish to appeal, please open an issue here: https://github.com/schme16/gitcdn.xyz/issues, with why you feel this repo should not be on the blacklist.")
+        return false
+    }
+    else if ((!meta.repo && !meta.user) && !meta.gist) {
+        res.sendStatus(404)
+        return false
+    }
+    else {
 
-    /*Set the */
-        options.url = 'https://api.github.com/' + (meta.gist ? 'gists' : 'repos') + '/' + (meta.gist ? '' : meta.user + '/') + meta.repo + (meta.gist ? '' : '/commits/' + meta.branch + '?client_id=' + process.env.gitcdn_clientid + '&client_secret=' + process.env.gitcdn_clientsecret)
+        /*Set the */
+            options.url = 'https://api.github.com/' + (meta.gist ? 'gists' : 'repos') + '/' + (meta.gist ? '' : meta.user + '/') + meta.repo + (meta.gist ? '' : '/commits/' + meta.branch + '?client_id=' + process.env.gitcdn_clientid + '&client_secret=' + process.env.gitcdn_clientsecret)
 
-    /*if the repo is cached, just send that back, and update it for next time*/
-        if (cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)]) {
-            refreshCache = true
-            lastCall(meta, cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)], req, res)
-        }
+        /*if the repo is cached, just send that back, and update it for next time*/
+            if (cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)]) {
+                refreshCache = true
+                lastCall(meta, cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)], req, res)
+            }
 
-    /*Update the repo, and cache it*/
-        request.get(options, function (err, r, rawBody) {
-            var body
-            if (rawBody) {
-                try {
-                    body = JSON.parse(rawBody)
+        /*Update the repo, and cache it*/
+            request.get(options, function (err, r, rawBody) {
+                var body
+                if (rawBody) {
+                    try {
+                        body = JSON.parse(rawBody)
+                    }
+                    catch (e) {
+                        console.log("Error: ", e)
+                    }
+                    if (meta.gist) meta.repo += '/raw'
+                    if (body && (body.sha || (body.history && body.history[0] && body.history[0].version))) {
+                        lastCall(meta, body.sha || body.history[0].version, req, res, refreshCache)
+                    }
+                    else { //Error
+                        if (!refreshCache) res.sendStatus(500)
+                        console.log("Error: " + 'SHA1 hash is missing in /repo -> request: ' + req.originalUrl + ' JSON=' + JSON.stringify(body))
+                        blacklist.push(meta.user + '/' + meta.repo)
+
+                    }
                 }
-                catch (e) {
-                    var err = new Error(e)
-                    console.log(err)
-                }
-                if (meta.gist) meta.repo += '/raw'
-                if (body && (body.sha || (body.history && body.history[0] && body.history[0].version))) lastCall(meta, body.sha || body.history[0].version, req, res, refreshCache)
-                else{
+                else { //Error
                     if (!refreshCache) res.sendStatus(500)
-                    var err = new Error('SHA1 hash is missing in /repo -> request: ' + req.path + ' JSON=' + JSON.stringify(body))
-                    console.log(err)
+                    console.log("Error: " + 'Status 500: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath)
+                    //blacklist.push(meta.user + '/' + meta.repo)
+
                 }
-            }
-            else {
-                if (!refreshCache) res.sendStatus(500)
-                var err = new Error('Status 500: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath)
-                console.log(err)
-            }
-            meta = null
-            options = null
-        })
+                meta = null
+                options = null
+            })
+        
+    }
 }
 
 //Handles redirection and cacheing
 function lastCall (meta, sha, req, res, cacheing) {
+    console.log(44444)
     if (sha && !cacheing) {
         var newUrl = createRedirectUrl(req.headers, meta, sha)
         cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)] = sha
@@ -141,11 +159,9 @@ function lastCall (meta, sha, req, res, cacheing) {
     }
     else {
         if (!cacheing) res.sendStatus(500)
-        var err = new Error('Status 500: SHA1 hash is missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath)
-        console.log(err)
+        console.log("Error: " + 'Status 500: SHA1 hash is missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath)
+       blacklist.push(meta.user + '/' + meta.repo)
     }
-
-    fs.writeFile('store-cache', JSON.stringify(cache))
 }
 
 //Does mandatory garbage collection at predefined intervals
@@ -156,6 +172,12 @@ function collectGarbage () {
 
 
 
+//Experimental - Hopeing to reduce the downtime posibly casued by memory limits
+setTimeout(function () {
+    cache = {}
+    collectGarbage()
+    setTimeout(collectGarbage, 10000)
+}, 4.32e+7)
 
 
 //Set up the exprtess routes
@@ -164,5 +186,5 @@ app.use('/favicon.ico', faviconFunc)//Serve the site icon
 app.use('/', staticContent)
 app.use(cors)
 app.get('/cdn/*', cdnFunc)
-app.get('/repo/*', repoFunc)
+app.use('/repo/*', repoFunc)
 app.listen(process.env.PORT || 8080)
