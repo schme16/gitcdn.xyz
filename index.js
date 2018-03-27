@@ -72,7 +72,6 @@ function cdnFunc (req, res) {
         res.setHeader('Content-Type', mime.lookup(t))
         res.setHeader("Cache-Control", "public, max-age=2592000");
         res.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());
-        //res.statusCode = 304
 
         newRes.pipe(res)
     }).on('error', function(err) {
@@ -194,6 +193,9 @@ setTimeout(function () {
 
 //Set up the exprtess routes
 if (process.env.NODE_ENV === 'development') app.use(debugFunc)
+
+app.enable('etag') // use strong etags
+
 app.use('/favicon.ico', faviconFunc)//Serve the site icon
 app.use('/', staticContent)
 app.use(cors)
