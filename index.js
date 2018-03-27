@@ -72,7 +72,7 @@ function cdnFunc (req, res) {
         res.setHeader('Content-Type', mime.lookup(t))
         res.setHeader("Cache-Control", "public, max-age=2592000");
         res.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());
-        res.statusCode = 304
+        //res.statusCode = 304
 
         newRes.pipe(res)
     }).on('error', function(err) {
