@@ -18,7 +18,9 @@ var favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
     cache = {},
     blacklist = [],
     tempBlacklist = [],
+    strikes = {},
     collectGarbageInterval = 15000
+
 
 
 
@@ -66,7 +68,11 @@ function cdnFunc (req, res) {
 
 
     req.pipe(http.request((t.split('/')[3] === 'raw' ? gistURL : rawURL) + t, function(newRes) {
+        
         res.setHeader('Content-Type', mime.lookup(t))
+        res.setHeader("Cache-Control", "public, max-age=2592000");
+        res.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());
+
         newRes.pipe(res)
     }).on('error', function(err) {
         res.statusCode = 500
@@ -130,7 +136,13 @@ function repoFunc (req, res) {
                     else { //Error
                         if (!refreshCache) res.sendStatus(500)
                         console.log("Error: " + 'SHA1 hash is missing in /repo -> request: ' + req.originalUrl + ' JSON=' + JSON.stringify(body))
-                        tempBlacklist.push(meta.filePath)//meta.user + '/' + meta.repo)
+
+                        strikes[meta.filePath] = strikes[meta.filePath] || 0
+                        if (strikes[meta.filePath] >= 10) tempBlacklist.push(meta.filePath)//meta.user + '/' + meta.repo)
+                        else {
+                            strikes[meta.filePath]++
+                        }
+
 
                     }
                 }
