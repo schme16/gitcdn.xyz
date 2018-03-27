@@ -194,7 +194,7 @@ setTimeout(function () {
 //Set up the exprtess routes
 if (process.env.NODE_ENV === 'development') app.use(debugFunc)
 
-app.enable('etag') // use strong etags
+app.set('etag', 'strong') // use strong etags
 
 app.use('/favicon.ico', faviconFunc)//Serve the site icon
 app.use('/', staticContent)
