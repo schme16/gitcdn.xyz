@@ -35,7 +35,7 @@
 			    <div class="column pure-u-1-1">
 			        <h2>Use this URL to always get the latest commit</h2>
 
-			        <p>
+			        <p class="target-url-container">
 			        <input id="url-dev" class="url" placeholder="user/repo/master/file" readonly>
 			        <script>
 			        	document.querySelector('[readonly]').placeholder = location.href + document.querySelector('[readonly]').placeholder
@@ -54,5 +54,7 @@
 	    </p>
 	</footer>
 	<script src="https://gitcdn.herokuapp.com/sys/js/url-formatter.js" defer async="true"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js"></script>
+	<script src="sys/js/clipboard.js"></script>
 </body>
 </html>
