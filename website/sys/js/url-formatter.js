@@ -11,6 +11,13 @@
         devEl  = document.getElementById('url-dev'),
         urlEl  = document.getElementById('url');
 
+    function setDevURLValue (newURL) {
+        var event = document.createEvent('HTMLEvents');
+        devEl.value  = encodeURI(newURL);
+        event.initEvent('change', true, false);
+        devEl.dispatchEvent(event);
+    }
+
     urlEl.addEventListener('input', function () {
         var url = decodeURIComponent(urlEl.value.trim()).replace('http://','').replace('https://','').split('/'),
             type = url.shift().replace('.githubusercontent.com', ''),
@@ -31,8 +38,7 @@
             devEl.classList.remove('invalid');
 
 
-            var newURL = repoDomain + '/' + base
-            devEl.value  = encodeURI(newURL);
+            setDevURLValue(repoDomain + '/' + base);
         }
 
         //Raw files
@@ -45,8 +51,7 @@
             devEl.classList.remove('invalid');
 
 
-            var newURL = repoDomain + '/' + base
-            devEl.value  = encodeURI(newURL);
+            setDevURLValue(repoDomain + '/' + base);
 
         }
 
@@ -60,7 +65,7 @@
                 urlEl.classList.remove('invalid');
             }
 
-            devEl.value  = '';
+            setDevURLValue('');
 
             devEl.classList.remove('valid');
         }
@@ -128,11 +133,4 @@
 
     }, false);
 
-    devEl.addEventListener('focus', onFocus);
-
-    function onFocus(e) {
-        setTimeout(function () {
-            e.target.select();
-        }, 1);
-    }
 }(window, document));

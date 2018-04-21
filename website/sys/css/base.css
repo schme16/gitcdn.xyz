@@ -348,3 +348,41 @@ pre { overflow-x: auto; }
     color: inherit;
     text-decoration: underline;
 }
+
+/* -- Copy to Clipboard ----------------------------------------------------- */
+.target-url-container { position: relative; }
+
+.target-url-container .url { box-sizing: border-box; }
+
+.btn-clipboard {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.1rem 0.6rem 0 0.5rem;
+    height: 100%;
+}
+
+.btn-clipboard.hidden {
+    display: none;
+}
+
+.btn-clipboard:hover,
+.btn-clipboard:focus {
+    text-decoration: none;
+}
+
+.btn-clipboard:focus,
+.btn-clipboard:active {
+    outline: 2px solid inherit;
+}
+
+.btn-clipboard svg {
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+}
+
+.btn-clipboard__label {
+    vertical-align: top;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
