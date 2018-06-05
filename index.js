@@ -138,7 +138,9 @@ function repoFunc (req, res) {
                         console.log("Error: " + 'SHA1 hash is missing in /repo -> request: ' + req.originalUrl + ' JSON=' + JSON.stringify(body))
 
                         strikes[meta.filePath] = strikes[meta.filePath] || 0
-                        if (strikes[meta.filePath] >= 10) tempBlacklist.push(meta.filePath)//meta.user + '/' + meta.repo)
+                        if (strikes[meta.filePath] >= 10) {
+                            //tempBlacklist.push(meta.filePath)//meta.user + '/' + meta.repo)
+                        }
                         else {
                             strikes[meta.filePath]++
                         }
@@ -171,7 +173,7 @@ function lastCall (meta, sha, req, res, cacheing) {
     else {
         if (!cacheing) res.sendStatus(500)
         console.log("Error: " + 'Status 500: SHA1 hash is missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath)
-       tempBlacklist.push(meta.filePath)//meta.user + '/' + meta.repo)
+       //tempBlacklist.push(meta.filePath)//meta.user + '/' + meta.repo)
     }
 }
 
