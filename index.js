@@ -3,12 +3,13 @@
 "use strict"
 
 
-var favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favicon.ico')), //load the favicon into memory, and gzip it. the memory footprint is small, and it saves disk reads
+let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favicon.ico')), //load the favicon into memory, and gzip it. the memory footprint is small, and it saves disk reads
     express = require('express'),
     fs = require('fs'),
     app = express(),
     request = require('request'),
     cors = require('cors')(),
+    port = process.env.PORT || 8080,
     staticContent = express.static(process.cwd() + '/website'),
     http = require('https'),
     mime = require('mime'),
@@ -19,8 +20,14 @@ var favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
     blacklist = [],
     tempBlacklist = [],
     strikes = {},
-    collectGarbageInterval = 15000
-
+    collectGarbageInterval = 15000,
+    charsetOverrides = {
+        'application/javascript': '; charset=utf-8',
+        'text/css': '; charset=utf-8',
+        'text/html': '; charset=utf-8',
+        'text/plain': '; charset=utf-8',
+        'application/json': '; charset=utf-8'
+    }
 
 
 
@@ -41,16 +48,12 @@ setInterval(collectGarbage, collectGarbageInterval)
 function createRedirectUrl (headers, meta, sha) {
     let scheme = (headers['cf-visitor'] && headers['cf-visitor'].scheme ? headers['cf-visitor'].scheme : 'https'),
         host = headers.host || cdnURL
-        console.log(headers['cf-visitor'], scheme)
 
     return `${scheme}://${host}/cdn/${meta.user}/${meta.repo}/${sha}/${meta.filePath}`
 }
 
 //Used for debugging during development
 function debugFunc (req, res, next) {
-
-    //console.log(req.headers)
-
     next()
 }
 
@@ -63,13 +66,14 @@ function faviconFunc (req, res) {
 
 //Serves the cdn route
 function cdnFunc (req, res) {
+
     //Gets the path data
     let t = req.originalUrl.substr(4)
 
 
     req.pipe(http.request((t.split('/')[3] === 'raw' ? gistURL : rawURL) + t, function(newRes) {
-        
-        res.setHeader('Content-Type', mime.lookup(t))
+        let mimeType = mime.lookup(t)
+        res.setHeader('Content-Type', mimeType + (charsetOverrides[mimeType] || ''))
         res.setHeader("Cache-Control", "public, max-age=2592000");
         res.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());
 
@@ -83,7 +87,7 @@ function cdnFunc (req, res) {
 
 //Serves the repo route
 function repoFunc (req, res) {
-    var meta = {},
+    let meta = {},
         refreshCache = false,
         options = {
             headers: {
@@ -121,7 +125,7 @@ function repoFunc (req, res) {
 
         /*Update the repo, and cache it*/
             request.get(options, function (err, r, rawBody) {
-                var body
+                let body
                 if (rawBody) {
                     try {
                         body = JSON.parse(rawBody)
@@ -163,7 +167,7 @@ function repoFunc (req, res) {
 //Handles redirection and cacheing
 function lastCall (meta, sha, req, res, cacheing) {
     if (sha && !cacheing) {
-        var newUrl = createRedirectUrl(req.headers, meta, sha)
+        let newUrl = createRedirectUrl(req.headers, meta, sha)
         cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)] = sha
         res.redirect(301, newUrl)
     }
@@ -203,4 +207,4 @@ app.use('/', staticContent)
 app.use(cors)
 app.get('/cdn/*', cdnFunc)
 app.use('/repo/*', repoFunc)
-app.listen(process.env.PORT || 8080)
+app.listen(port)
