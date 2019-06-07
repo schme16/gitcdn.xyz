@@ -105,7 +105,7 @@ function repoFunc (req, res) {
         meta.branch = meta.raw.shift()
         meta.filePath = meta.raw.join('/')
     if (blacklist.indexOf(meta.user + '/' + meta.repo) > -1  || tempBlacklist.indexOf(meta.filePath) > -1) {
-        res.status(403).send("Forbidden - This repo/gist is on the blacklist. If you wish to appeal, please open an issue here: https://github.com/schme16/gitcdn.xyz/issues, with why you feel this repo should not be on the blacklist.")
+        res.status(404).send("Forbidden - This repo/gist is on the blacklist. If you wish to appeal, please open an issue here: https://github.com/schme16/gitcdn.xyz/issues, with why you feel this repo should not be on the blacklist.")
         return false
     }
     else if ((!meta.repo && !meta.user) && !meta.gist) {
