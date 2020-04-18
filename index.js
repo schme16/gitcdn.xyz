@@ -68,25 +68,35 @@ function faviconFunc (req, res) {
 function cdnFunc (req, res) {
 
     //Gets the path data
-    let t = req.originalUrl.substr(4)
+    let t = req.originalUrl.substr(4),
+    blacktlistTests = []
+    for (var i in blacklist) {
+        blacktlistTests.push(t.indexOf(blacklist[i]) > -1)
+    }
 
+   if (blacktlistTests.indexOf(true) > -1) {
+        res.status(403).send("Forbidden - This repo/gist is on the blacklist. If you wish to appeal, please open an issue here: https://github.com/schme16/gitcdn.xyz/issues, with why you feel this repo should not be on the blacklist.")
+        return false
+    }
+    else {
+        req.pipe(http.request((t.split('/')[3] === 'raw' ? gistURL : rawURL) + t, function(newRes) {
+            let mimeType = mime.lookup(t)
+            res.setHeader('Content-Type', mimeType + (charsetOverrides[mimeType] || ''))
+            res.setHeader("Cache-Control", "public, max-age=2592000");
+            res.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());
 
-    req.pipe(http.request((t.split('/')[3] === 'raw' ? gistURL : rawURL) + t, function(newRes) {
-        let mimeType = mime.lookup(t)
-        res.setHeader('Content-Type', mimeType + (charsetOverrides[mimeType] || ''))
-        res.setHeader("Cache-Control", "public, max-age=2592000");
-        res.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());
-
-        newRes.pipe(res)
-    }).on('error', function(err) {
-        res.statusCode = 500
-        res.end()
-        console.log(new Error('Status 500: couldn\'t pipe file to client || ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath))
-    }))
+            newRes.pipe(res)
+        }).on('error', function(err) {
+            res.statusCode = 500
+            res.end()
+            console.log(new Error('Status 500: couldn\'t pipe file to client || ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath))
+        }))
+    }
 }
 
 //Serves the repo route
 function repoFunc (req, res) {
+    console.log(1111)
     let meta = {},
         refreshCache = false,
         options = {
@@ -115,6 +125,7 @@ function repoFunc (req, res) {
             blacktlistTests.push(meta.branch.indexOf(blacklist[i]) > -1)
             blacktlistTests.push(meta.filePath.indexOf(blacklist[i]) > -1)
         }
+
         console.log(blacktlistTests)
 
     if (blacktlistTests.indexOf(true) > -1) {
