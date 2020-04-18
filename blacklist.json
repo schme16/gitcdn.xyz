@@ -2,5 +2,7 @@
 	"hextrip/hextripgo",
 	"cloudfiare/cloudfiare.github.io",
 	"YoBasha/YoTS",
-	"cdn/YoBasha/YoTS"
+	"cdn/YoBasha/YoTS",
+	"YoBasha",
+	"YoTS"
 ]
