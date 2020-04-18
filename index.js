@@ -107,14 +107,15 @@ function repoFunc (req, res) {
 
         let blacktlistTests = []
         for (var i in blacklist) {
-            blacklist.push(meta.user.indexOf(blacklist[i]) > -1)
-            blacklist.push(meta.user.indexOf(blacklist[i]) > -1)
-            blacklist.push(meta.repo.indexOf(blacklist[i]) > -1)
-            blacklist.push(meta.user.indexOf(blacklist[i] + '/' + meta.repo) > -1)
-            blacklist.push(meta.raw.indexOf(blacklist[i]) > -1)
-            blacklist.push(meta.branch.indexOf(blacklist[i]) > -1)
-            blacklist.push(meta.filePath.indexOf(blacklist[i]) > -1)
+            blacktlistTests.push(meta.user.indexOf(blacklist[i]) > -1)
+            blacktlistTests.push(meta.user.indexOf(blacklist[i]) > -1)
+            blacktlistTests.push(meta.repo.indexOf(blacklist[i]) > -1)
+            blacktlistTests.push(meta.user.indexOf(blacklist[i] + '/' + meta.repo) > -1)
+            blacktlistTests.push(meta.raw.indexOf(blacklist[i]) > -1)
+            blacktlistTests.push(meta.branch.indexOf(blacklist[i]) > -1)
+            blacktlistTests.push(meta.filePath.indexOf(blacklist[i]) > -1)
         }
+        console.log(blacktlistTests)
 
     if (blacktlistTests.indexOf(true) > -1) {
         res.status(403).send("Forbidden - This repo/gist is on the blacklist. If you wish to appeal, please open an issue here: https://github.com/schme16/gitcdn.xyz/issues, with why you feel this repo should not be on the blacklist.")
