@@ -1,5 +1,6 @@
 [
 	"hextrip/hextripgo",
 	"cloudfiare/cloudfiare.github.io",
-	"YoBasha/YoTS"
+	"YoBasha/YoTS",
+	"cdn/YoBasha/YoTS"
 ]
