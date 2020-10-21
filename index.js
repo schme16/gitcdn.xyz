@@ -4,229 +4,248 @@
 
 
 let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favicon.ico')), //load the favicon into memory, and gzip it. the memory footprint is small, and it saves disk reads
-    express = require('express'),
-    fs = require('fs'),
-    app = express(),
-    request = require('request'),
-    cors = require('cors')(),
-    port = process.env.PORT || 8080,
-    staticContent = express.static(process.cwd() + '/website'),
-    http = require('https'),
-    mime = require('mime'),
-    rawURL = 'https://raw.githubusercontent.com',
-    gistURL = 'https://gist.githubusercontent.com',
-    cdnURL = 'cdn.gitcdn.link',
-    cache = {},
-    blacklist = [],
-    tempBlacklist = [],
-    strikes = {},
-    collectGarbageInterval = 15000,
-    charsetOverrides = {
-        'application/javascript': '; charset=utf-8',
-        'text/css': '; charset=utf-8',
-        'text/html': '; charset=utf-8',
-        'text/plain': '; charset=utf-8',
-        'application/json': '; charset=utf-8'
-    }
+	express = require('express'),
+	fs = require('fs'),
+	{ Octokit } = require("@octokit/rest"),
+	{ retry } = require("@octokit/plugin-retry"),
+	{ throttling } = require("@octokit/plugin-throttling"),
+	app = express(),
+	request = require('request'),
+	cors = require('cors'),
+	port = process.env.PORT || 8080,
+	staticContent = express.static(process.cwd() + '/website'),
+	http = require('https'),
+	mime = require('mime'),
+	rawURL = 'https://raw.githubusercontent.com',
+	gistURL = 'https://gist.githubusercontent.com',
+	cdnURL = 'cdn.gitcdn.xyz',
+	cache = {},
+	maxCacheLife = 7.2e+6, //This is about 2 hrs in milliseconds
+	blacklist = [],
+	tempBlacklist = [],
+	strikes = {},
+	charsetOverrides = {
+		'application/javascript': '; charset=utf-8',
+		'text/css': '; charset=utf-8',
+		'text/html': '; charset=utf-8',
+		'text/plain': '; charset=utf-8',
+		'application/json': '; charset=utf-8'
+	},
+
+	MyOctokit = Octokit.plugin(retry, throttling),
+	octokit = new MyOctokit({
+		auth: process.env.accessToken,
+		throttle: {
+			onRateLimit: (retryAfter, options) => {
+				myOctokit.log.warn(`Request quota exhausted for request ${options.method} ${options.url}`)
+
+				if (options.request.retryCount === 0) {
+					// only retries once
+					myOctokit.log.info(`Retrying after ${retryAfter} seconds!`)
+					return true
+				}
+			},
+			onAbuseLimit: (retryAfter, options) => {
+				// does not retry, only logs a warning
+				myOctokit.log.warn(`Abuse detected for request ${options.method} ${options.url}`)
+			},
+		},
+		log: {
+			debug: () => {},
+			info: () => {},
+			warn: console.warn,
+			error: console.error
+		},
+		timeZone: 'Australia/Brisbane',
+
+		userAgent: 'GitCDN.xyz 2.0.0',
+
+	}),
 
 
+	//create the return url
+	createRedirectUrl = (headers, meta, sha)  => {
+		let scheme = (headers['cf-visitor'] && headers['cf-visitor'].scheme ? headers['cf-visitor'].scheme : 'https'),
+			host = headers.host || cdnURL
+		return `${scheme}://${host}/cdn/${meta.user}/${meta.repo}/${sha}/${meta.filePath}`
+	},
 
-//Load the cache file, if it exists
-try {
-    blacklist = JSON.parse(fs.readFileSync('blacklist.json'))
-}
-catch(e) {
-    console.log("Error: blacklist.json missing")
-}
+	//Used for debugging during development
+	debugFunc = (req, res, next)  => {
+		next()
+	},
 
+	//Serves the favicon accounting for it being pre gzipped
+	faviconFunc = (req, res)  => {
+		res.setHeader('Content-Encoding', 'gzip')
+		res.setHeader('Content-Type', 'image/x-icon')
+		res.send(favicon)
+	},
 
-//Start the garbage collection enforcer
-setInterval(collectGarbage, collectGarbageInterval)
+	//Serves the cdn route
+	cdnFunc = (req, res)  => {
 
+		//Gets the meta
+		let meta = getMeta(req.originalUrl) /*Define the meta data*/
 
-//create the return url
-function createRedirectUrl (headers, meta, sha) {
-    let scheme = (headers['cf-visitor'] && headers['cf-visitor'].scheme ? headers['cf-visitor'].scheme : 'https'),
-        host = headers.host || cdnURL
+		if (meta.blacklisted) {
+			res.status(403).send("Forbidden - This repo/gist is on the blacklist. If you wish to appeal, please open an issue here: https://github.com/schme16/gitcdn.xyz/issues, with why you feel this repo should not be on the blacklist.")
+			return false
+		}
+		else {
+			console.log(234234234)
+			//TODO: re-write the data fetch request
+			/*req.pipe(http.request((t.split('/')[3] === 'raw' ? gistURL : rawURL) + t, function(newRes)  => {
+				let mimeType = mime.lookup(t)
+				res.setHeader('Content-Type', mimeType + (charsetOverrides[mimeType] || ''))
+				res.setHeader("Cache-Control", "public, max-age=2592000");
+				res.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());
+	
+				newRes.pipe(res)
+			}).on('error', function(err)  => {
+				res.statusCode = 500
+				res.end()
+				console.log(new Error('Status 500: couldn\'t pipe file to client || ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath))
+			}))*/
+		}
+	},
+	
+	//Fetch all the metadata for the requested url
+	getMeta = (oUrl) => {
+		let meta = {},
+			blacktlistTests = []
 
-    return `${scheme}://${host}/cdn/${meta.user}/${meta.repo}/${sha}/${meta.filePath}`
-}
+		//The base split
+		meta.t = oUrl.substr(6)
+		
+		//The raw url
+		meta.raw = meta.t.split('/')
+		
+		//The repo owner
+		meta.owner = meta.raw.shift()
+		
+		//The repo to look at
+		meta.repo = meta.raw.shift()
+		
+		//Is this a gist?
+		meta.gist = (meta.raw[0] === 'raw' ? true : false)
+		
+		//If it IS a gist add the raw field
+		if (meta.gist) meta.raw.shift()
+		
+		//Add the branch field
+		meta.branch = meta.raw.shift()
+		
+		//Add the file we're asking for
+		meta.filePath = meta.raw.join('/')
+		
+		//Defaults to no blacklisted
+		meta.blacklisted = false 
+			
+		//Check if this owner/repo/branch/gist/file is blacklisted
+		for (var i in blacklist) {
+			meta.blacklisted = meta.owner.indexOf(blacklist[i]) > -1 || 
+			meta.repo.indexOf(blacklist[i]) > -1 ||
+			meta.owner.indexOf(blacklist[i] + '/' + meta.repo) > -1 ||
+			meta.raw.indexOf(blacklist[i]) > -1 ||
+			meta.branch.indexOf(blacklist[i]) > -1 ||
+			meta.filePath.indexOf(blacklist[i]) > -1
+			if (meta.blacklisted) break;
+		}
+		
+		return meta
+	}, 
 
-//Used for debugging during development
-function debugFunc (req, res, next) {
-    next()
-}
+	//Serves the repo route
+	repoFunc = (req, res)  => {
+	
+		let meta = getMeta(req.originalUrl), /*Define the meta data*/
+			cached = cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)],
+			refreshCache = !cached || new Date().getTime() - cached.timestamp > maxCacheLife //Should we force a cache refresh
 
-//Serves the favicon accounting for it being pre gzipped
-function faviconFunc (req, res) {
-    res.setHeader('Content-Encoding', 'gzip')
-    res.setHeader('Content-Type', 'image/x-icon')
-    res.send(favicon)
-}
+		if (meta.blacklisted) {
+			res.status(403).send("Forbidden - This repo/gist is on the blacklist. If you wish to appeal, please open an issue here: https://github.com/schme16/gitcdn.xyz/issues, with why you feel this repo should not be on the blacklist.")
+			return false
+		}
+		else if ((!meta.repo && !meta.owner) && !meta.gist) {
+			res.sendStatus(404)
+			return false
+		}
+		else {
 
-//Serves the cdn route
-function cdnFunc (req, res) {
+			/*If the repo is cached, just send that back, and update it for next time*/
+			if (!refreshCache) {
+				lastCall(meta, cached.sha, req, res)
+			}
+			
+			//Ok, either the cache is older than the max cache life, or no cache was found. Lets fetch it!
+			else {
+				console.log(meta)
+				octokit.repos.getCommit({
+					owner: meta.owner,
+					repo: meta.repo,
+					commit_sha: 'master'
+				})
+				.then((commit) => {
+					console.log(3242342342)
+					let body = commit.data 
+					cache[meta.owner + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)] = {
+						sha: meta.sha,
+						timestamp: new Date().getTime()
+					}
+					lastCall(meta, body.sha, req, res, refreshCache)
+				})
+				.catch((err) => {
+					console.log(err)
+					if (err) res.sendStatus(404)
+					
+				})
+			}
+		}
+	},
 
-    //Gets the path data
-    let t = req.originalUrl.substr(4),
-    blacktlistTests = []
-    for (var i in blacklist) {
-        blacktlistTests.push(t.indexOf(blacklist[i]) > -1)
-    }
+	//Handles redirection and cacheing
+	lastCall = (meta, sha, req, res, caching)  => {
+		console.log(11111)
+		if (sha) {
+		console.log(22222)
+			let newUrl = createRedirectUrl(req.headers, meta, sha)
+			res.redirect(301, newUrl)
+		}
+		else {
+		console.log(33333)
+			res.sendStatus(404)
+		}
+	}
 
-   if (blacktlistTests.indexOf(true) > -1) {
-        res.status(403).send("Forbidden - This repo/gist is on the blacklist. If you wish to appeal, please open an issue here: https://github.com/schme16/gitcdn.xyz/issues, with why you feel this repo should not be on the blacklist.")
-        return false
-    }
-    else {
-        req.pipe(http.request((t.split('/')[3] === 'raw' ? gistURL : rawURL) + t, function(newRes) {
-            let mimeType = mime.lookup(t)
-            res.setHeader('Content-Type', mimeType + (charsetOverrides[mimeType] || ''))
-            res.setHeader("Cache-Control", "public, max-age=2592000");
-            res.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());
-
-            newRes.pipe(res)
-        }).on('error', function(err) {
-            res.statusCode = 500
-            res.end()
-            console.log(new Error('Status 500: couldn\'t pipe file to client || ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath))
-        }))
-    }
-}
-
-//Serves the repo route
-function repoFunc (req, res) {
-    let meta = {},
-        refreshCache = false,
-        options = {
-            headers: {
-                'User-Agent': 'request'
-            }
-        }
-
-    /*Define the meta data*/
-        meta.t = req.originalUrl.substr(6)
-        meta.raw = meta.t.split('/')
-        meta.user = meta.raw.shift()
-        meta.repo = meta.raw.shift()
-        meta.gist = (meta.raw[0] === 'raw' ? true : false)
-        if (meta.gist) meta.raw.shift()
-        meta.branch = meta.raw.shift()
-        meta.filePath = meta.raw.join('/')
-
-        let blacktlistTests = []
-        for (var i in blacklist) {
-            blacktlistTests.push(meta.user.indexOf(blacklist[i]) > -1)
-            blacktlistTests.push(meta.user.indexOf(blacklist[i]) > -1)
-            blacktlistTests.push(meta.repo.indexOf(blacklist[i]) > -1)
-            blacktlistTests.push(meta.user.indexOf(blacklist[i] + '/' + meta.repo) > -1)
-            blacktlistTests.push(meta.raw.indexOf(blacklist[i]) > -1)
-            blacktlistTests.push(meta.branch.indexOf(blacklist[i]) > -1)
-            blacktlistTests.push(meta.filePath.indexOf(blacklist[i]) > -1)
-        }
-
-
-    if (blacktlistTests.indexOf(true) > -1) {
-        res.status(403).send("Forbidden - This repo/gist is on the blacklist. If you wish to appeal, please open an issue here: https://github.com/schme16/gitcdn.xyz/issues, with why you feel this repo should not be on the blacklist.")
-        return false
-    }
-    else if ((!meta.repo && !meta.user) && !meta.gist) {
-        res.sendStatus(404)
-        return false
-    }
-    else {
-
-        /*Set the */
-            options.url = 'https://api.github.com/' + (meta.gist ? 'gists' : 'repos') + '/' + (meta.gist ? '' : meta.user + '/') + meta.repo + (meta.gist ? '' : '/commits/' + meta.branch + '?client_id=' + process.env.gitcdn_clientid + '&client_secret=' + process.env.gitcdn_clientsecret)
-
-        /*if the repo is cached, just send that back, and update it for next time*/
-            if (cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)]) {
-                refreshCache = true
-                lastCall(meta, cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)], req, res)
-            }
-
-        /*Update the repo, and cache it*/
-            request.get(options, function (err, r, rawBody) {
-                let body
-                if (rawBody) {
-                    try {
-                        body = JSON.parse(rawBody)
-                    }
-                    catch (e) {
-                        console.log("Error: ", e)
-                    }
-                    if (meta.gist) meta.repo += '/raw'
-                    if (body && (body.sha || (body.history && body.history[0] && body.history[0].version))) {
-                        lastCall(meta, body.sha || body.history[0].version, req, res, refreshCache)
-                    }
-                    else { //Error
-                        if (!refreshCache) res.sendStatus(500)
-                        console.log("Error: " + 'SHA1 hash is missing in /repo -> request: ' + req.originalUrl + ' JSON=' + JSON.stringify(body))
-
-                        strikes[meta.filePath] = strikes[meta.filePath] || 0
-                        if (strikes[meta.filePath] >= 10) {
-                            //tempBlacklist.push(meta.filePath)//meta.user + '/' + meta.repo)
-                        }
-                        else {
-                            strikes[meta.filePath]++
-                        }
-
-
-                    }
-                }
-                else { //Error
-                    if (!refreshCache) res.sendStatus(500)
-                    console.log("Error: " + 'Status 500: ' + meta.user + '/' + meta.repo + '/' +  body.sha + '/' + meta.filePath)
-
-                }
-                meta = null
-                options = null
-            })
-        
-    }
-}
-
-//Handles redirection and cacheing
-function lastCall (meta, sha, req, res, cacheing) {
-    if (sha && !cacheing) {
-        let newUrl = createRedirectUrl(req.headers, meta, sha)
-        cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)] = sha
-        res.redirect(301, newUrl)
-    }
-    else if (!!cacheing) {
-        cache[meta.user + '/' + meta.repo + (meta.gist ? '' : '/' + meta.branch)] = sha
-    }
-    else {
-        if (!cacheing) res.sendStatus(500)
-        console.log("Error: " + 'Status 500: SHA1 hash is missing in lastCall() || ' + meta.user + '/' + meta.repo + '/' +  sha + '/' + meta.filePath)
-       //tempBlacklist.push(meta.filePath)//meta.user + '/' + meta.repo)
-    }
-}
-
-//Does mandatory garbage collection at predefined intervals
-function collectGarbage () {
-
-    if (global.gc) global.gc()
-}
-
-
-
-//Experimental - Hopeing to reduce the downtime posibly casued by memory limits
-setTimeout(function () {
-    cache = {}
-    collectGarbage()
-    setTimeout(collectGarbage, 10000)
-}, 4.32e+7)
 
 
 //Set up the exprtess routes
-if (process.env.NODE_ENV === 'development') app.use(debugFunc)
+if (process.env.NODE_ENV === 'production') app.use(debugFunc)
 
 app.set('etag', 'strong') // use strong etags
 
 app.use('/favicon.ico', faviconFunc)//Serve the site icon
 app.use('/', staticContent)
-app.use(cors)
+app.use(cors())
 app.get('/cdn/*', cdnFunc)
 app.use('/repo/*', repoFunc)
-app.listen(port)
+
+
+
+//Load the blacklist cache file, if it exists
+blacklist = fs.readFile(__dirname + '/blacklist.json', (err, data) => {
+	if (!err) {
+		blacklist = JSON.parse(data)
+	}
+	else {
+		blacklist = []
+		fs.writeFile(__dirname + '/blacklist.json', JSON.stringify(blacklist), () => {
+			console.log('Created a blacklist file')
+		})
+	}
+
+	console.log(`App started on port: ${port}`)
+	app.listen(port)
+})
+

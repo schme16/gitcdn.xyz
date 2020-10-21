@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\javascript\typings\express\4.17.8\node_modules\@types\body-parser" t="IncludeRecursive" />
+    <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\javascript\typings\express\4.17.8\node_modules\@types\connect" t="IncludeRecursive" />
+    <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\javascript\typings\express\4.17.8\node_modules\@types\express" t="IncludeRecursive" />
+    <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\javascript\typings\express\4.17.8\node_modules\@types\express-serve-static-core" t="IncludeRecursive" />
+    <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\javascript\typings\express\4.17.8\node_modules\@types\mime" t="IncludeRecursive" />
+    <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\javascript\typings\express\4.17.8\node_modules\@types\node" t="IncludeRecursive" />
+    <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\javascript\typings\express\4.17.8\node_modules\@types\qs" t="IncludeRecursive" />
+    <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\javascript\typings\express\4.17.8\node_modules\@types\range-parser" t="IncludeRecursive" />
+    <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\javascript\typings\express\4.17.8\node_modules\@types\serve-static" t="IncludeRecursive" />
+    <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\resharper-host\Local\Transient\Rider\v202\SolutionCaches\_.19.00" t="ExcludeRecursive" />
+    <e p="C:\Users\U1038447\AppData\Roaming\JetBrains\Rider2020.2\scratches" t="IncludeRecursive" />
+    <e p="C:\Users\U1038447\Desktop\gitcdn.xyz" t="IncludeFlat">
+      <e p="node_modules\@octokit\auth-token" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\core" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\endpoint" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\graphql" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\plugin-paginate-rest" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\plugin-request-log" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\plugin-rest-endpoint-methods" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\plugin-retry" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\plugin-throttling" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\request" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\request-error" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\rest" t="IncludeRecursive" />
+      <e p="node_modules\@octokit\types" t="IncludeRecursive" />
+      <e p="node_modules\@types" t="IncludeRecursive" />
+      <e p="node_modules\before-after-hook" t="IncludeRecursive" />
+      <e p="node_modules\bottleneck" t="IncludeRecursive" />
+      <e p="node_modules\cors" t="IncludeRecursive" />
+      <e p="node_modules\deprecation" t="IncludeRecursive" />
+      <e p="node_modules\express" t="IncludeRecursive" />
+      <e p="node_modules\is-plain-object" t="IncludeRecursive" />
+      <e p="node_modules\mime" t="IncludeRecursive" />
+      <e p="node_modules\request" t="IncludeRecursive" />
+      <e p="node_modules\universal-user-agent" t="IncludeRecursive" />
+    </e>
+  </component>
+</project>
