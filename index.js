@@ -151,7 +151,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 			scheme = headers['cf-visitor'].scheme
 		}
 		else {
-			scheme = req.connection.encrypted || req.connection.secure || req.protocol
+			scheme = 'https'
 		}
 		return `${scheme}://${host}/cdn/${meta.owner}/${meta.repo}${(meta.gist ? '/raw' : '')}/${sha}/${meta.filePath}`
 	},
