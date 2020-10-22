@@ -20,9 +20,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ffb86b40-ab73-4712-83e0-c73e3c570560" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/caches.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nodemon.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/strikes.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.gitcdn.xyz.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.gitcdn.xyz.dir/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
     </list>
@@ -80,7 +77,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1603256737638</updated>
-      <workItem from="1603256753125" duration="17777000" />
+      <workItem from="1603256753125" duration="18251000" />
     </task>
     <servers />
   </component>

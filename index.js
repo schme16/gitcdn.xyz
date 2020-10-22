@@ -243,13 +243,11 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 
 			/*If the repo is cached, just send that back, and update it for next time*/
 			if (!!cached) {
-				console.log('Cached!')
 				lastCall(meta, cached.sha || cached.branch, req, res)
 			}
 			
 			//Ok, either the cache is older than the max cache life, or no cache was found. Lets fetch it!
 			else {
-				console.log('NOT Cached!')
 				if (meta.gist) {
 					lastCall(meta, meta.branch, req, res)
 				}
