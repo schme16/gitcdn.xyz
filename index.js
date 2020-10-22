@@ -144,17 +144,14 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 	},
 	
 	//create the return url
-	createRedirectUrl = (headers, meta, sha)  => {
+	createRedirectUrl = (req, headers, meta, sha)  => {
 		let scheme,
 			host = headers.host || cdnURL
 		if (headers['cf-visitor'] && headers['cf-visitor'].scheme) {
 			scheme = headers['cf-visitor'].scheme
 		}
-		else if (headers['upgrade-insecure-requests'] == 1) {
-			scheme = 'http'
-		}
 		else {
-			scheme = 'https'
+			scheme = req.connection.encrypted || req.connection.secure || req.protocol
 		}
 		return `${scheme}://${host}/cdn/${meta.owner}/${meta.repo}${(meta.gist ? '/raw' : '')}/${sha}/${meta.filePath}`
 	},
@@ -168,6 +165,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 	
 	//Fetch all the metadata for the requested url
 	getMeta = (oUrl) => {
+	
 		let meta = {},
 			blacktlistTests = []
 		
@@ -229,6 +227,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 
 	//Serves the repo route
 	repoFunc = (req, res)  => {
+	
 		let meta = getMeta(req.originalUrl), /*Define the meta data*/
 			cached = cache[meta.fetchUrl]
 		
@@ -282,7 +281,6 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 
 	//Serves the cdn route
 	cdnFunc = (req, res)  => {
-
 		//Gets the meta
 		let meta = getMeta(req.originalUrl) /*Define the meta data*/
 		
@@ -321,7 +319,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 	//Handles redirection
 	lastCall = (meta, sha, req, res)  => {
 		if (sha) {
-			let newUrl = createRedirectUrl(req.headers, meta, sha)
+			let newUrl = createRedirectUrl(req, req.headers, meta, sha)
 			res.redirect(301, newUrl)
 		}
 		else {
