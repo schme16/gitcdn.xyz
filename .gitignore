@@ -27,3 +27,5 @@ build/Release
 node_modules
 store-cache
 store-*
+strikes.json
+caches.json

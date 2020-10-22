@@ -20,9 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ffb86b40-ab73-4712-83e0-c73e3c570560" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/caches.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/nodemon.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/strikes.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.gitcdn.xyz.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.gitcdn.xyz.dir/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/website/sys/js/url-formatter.js" beforeDir="false" afterPath="$PROJECT_DIR$/website/sys/js/url-formatter.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,16 +50,21 @@
         <option value="$APPLICATION_CONFIG_DIR$/scratches/test.js" />
         <option value="$PROJECT_DIR$/website/sys/js/url-formatter.js" />
         <option value="$PROJECT_DIR$/blacklist.json" />
+        <option value="$PROJECT_DIR$/nodemon.json" />
         <option value="$PROJECT_DIR$/index.js" />
       </list>
     </option>
   </component>
   <component name="ProjectId" id="1jApQq859jYbuiZq4bG9hZIJp6j" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -73,7 +80,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1603256737638</updated>
-      <workItem from="1603256753125" duration="17487000" />
+      <workItem from="1603256753125" duration="17777000" />
     </task>
     <servers />
   </component>
@@ -94,6 +101,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
   <component name="WindowStateProjectService">

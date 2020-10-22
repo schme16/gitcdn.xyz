@@ -1,0 +1,3 @@
+{
+  "watch": ["index.js", "blacklist.json"]
+}

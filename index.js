@@ -345,7 +345,7 @@ setInterval(periodicChecks, 10000)
 
 
 //Load the blacklist cache file, if it exists
-blacklist = fs.readFile(__dirname + '/blacklist.json', (err, data) => {
+fs.readFile(__dirname + '/blacklist.json', (err, data) => {
 	if (!err) {
 		blacklist = JSON.parse(data)
 	}
@@ -356,7 +356,27 @@ blacklist = fs.readFile(__dirname + '/blacklist.json', (err, data) => {
 		})
 	}
 
-	console.log(`App started on port: ${port}`)
-	app.listen(port)
+	//Now load the strikes
+	fs.readFile(__dirname + '/strikes.json', (err, data) => {
+		if (!err) {
+			strikes = JSON.parse(data)
+		}
+		else {
+			strikes = []
+		}
+		
+		//Finally, load the caches
+		fs.readFile(__dirname + '/caches.json', (err, data) => {
+			if (!err) {
+				cache = JSON.parse(data)
+			}
+			else {
+				cache = []
+			}
+			
+			console.log(`App started on port: ${port}`)
+			app.listen(port)
+		})
+	})
 })
 
