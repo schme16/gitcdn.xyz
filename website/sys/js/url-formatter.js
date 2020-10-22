@@ -2,8 +2,8 @@
 
     "use strict";
 
-    var cdnDomain = 'https://' + (location.href.replace('http://', '').replace('https://', '') +'cdn'),
-        repoDomain = 'https://' + (location.href.replace('http://', '').replace('https://', '') + 'repo'),
+    var cdnDomain = location.protocol + '//' + (location.href.replace('http://', '').replace('https://', '') +'cdn'),
+        repoDomain = location.protocol + '//' + (location.href.replace('http://', '').replace('https://', '') + 'repo'),
 
         gistCDNDomain = location.href.replace('http://', '').replace('https://', '') + 'gistcdn',
         gistDomain = location.href.replace('http://', '').replace('https://', '') + 'gist',
