@@ -19,6 +19,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 	rawURL = 'https://raw.githubusercontent.com',
 	gistURL = 'https://gist.githubusercontent.com',
 	cdnURL = 'cdn.gitcdn.xyz',
+	garbageCollectionTime = 18e+6, //This is about 5 hours
 	maxCacheLife = 7.2e+6, //This is about 2 hrs in milliseconds
 	cache = {},
 	tempBlacklist = [],
@@ -109,18 +110,26 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 			}
 		}
 	},
+	
+	//Save strikes to disk
 	saveStrikes = () => {
 		fs.writeFile(__dirname + '/strikes.json', JSON.stringify(strikes), (err) => {
 			if (err) console.log(err)
 		})
 	},
 	
+	//Save cache to disk 
 	saveCaches = () => {
 		fs.writeFile(__dirname + '/caches.json', JSON.stringify(cache), (err) => {
 			if (err) console.log(err)
 		})
 		
 	},
+	
+	//Force a garbage collection event.
+	runGarbageCollection = () => {
+		if (global && global.gc) global.gc()
+	},	
 	
 	//This handles all the occasional tasks, like cache clearing, strike management, garbage collection, etc
 	periodicChecks = () => {
@@ -148,11 +157,6 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 			scheme = 'https'
 		}
 		return `${scheme}://${host}/cdn/${meta.owner}/${meta.repo}${(meta.gist ? '/raw' : '')}/${sha}/${meta.filePath}`
-	},
-
-	//Used for debugging during development
-	debugFunc = (req, res, next)  => {
-		next()
 	},
 
 	//Serves the favicon accounting for it being pre gzipped
@@ -314,8 +318,8 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		}
 	},
 
-	//Handles redirection and caching
-	lastCall = (meta, sha, req, res, caching)  => {
+	//Handles redirection
+	lastCall = (meta, sha, req, res)  => {
 		if (sha) {
 			let newUrl = createRedirectUrl(req.headers, meta, sha)
 			res.redirect(301, newUrl)
@@ -326,20 +330,17 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 	}
 
 
-
-//Set up the exprtess routes
-if (process.env.NODE_ENV === 'production') app.use(debugFunc)
-
+//Set some global route settings
 app.set('etag', 'strong') // use strong etags
+app.use(cors())
 
+
+//Set up the express routes
 app.use('/favicon.ico', faviconFunc)//Serve the site icon
 app.use('/', staticContent)
-app.use(cors())
 app.get('/cdn/*', cdnFunc)
 app.use('/repo/*', repoFunc)
 
-
-setInterval(periodicChecks, 10000)
 
 
 //Load the blacklist cache file, if it exists
@@ -372,6 +373,11 @@ fs.readFile(__dirname + '/blacklist.json', (err, data) => {
 				cache = []
 			}
 			
+			//Start the periodic checks and GC
+			setInterval(periodicChecks, 10000)
+			setInterval(runGarbageCollection, garbageCollectionTime)
+
+			//Launch the app
 			console.log(`App started on port: ${port}`)
 			app.listen(port)
 		})
