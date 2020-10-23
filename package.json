@@ -1,36 +1,39 @@
 {
-  "name": "GitCDN",
-  "version": "1.0.2",
-  "description": "GitCDN server",
-  "keywords": [
-    "OpenShift",
-    "Node.js",
-    "application",
-    "openshift"
-  ],
-  "author": {
-    "name": "GitCDN",
-    "email": "schme16@gmail.com",
-    "url": "https://gitcdn.xyz"
-  },
-  "homepage": "https://gitcdn.xyz",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:schme16/gitcdn.xyz.git"
+  "name": "gitcdn.xyz",
+  "version": "2.0.0",
+  "description": "A CDN for raw.githubusercontent.com content, that always links to the latest version (aka your master branch).\r Built on NodeJS for rock solid delivery!",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mime": "^1.6.0",
+    "request": "^2.88.2",
+    "simple-git": "^2.21.0"
   },
   "engines": {
     "node": ">= 12",
     "npm": ">= 6"
   },
-  "dependencies": {
-    "cors": "^2.8.1",
-    "express": "^4.14.0",
-    "mime": "^1.3.4",
-    "request": "^2.88.2",
-    "simple-git": "^2.21.0"
-  },
   "devDependencies": {},
   "bundleDependencies": [],
   "private": true,
-  "main": "index.js"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --expose-gc index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schme16/gitcdn.xyz.git"
+  },
+  "author": {
+    "name": "Shane Gadsby",
+    "organisation": "GitCDN",
+    "email": "schme16@gmail.com",
+    "url": "https://gitcdn.xyz"
+  },
+  "license": "GPL3",
+  "bugs": {
+    "url": "https://github.com/schme16/gitcdn.xyz/issues"
+  },
+  "homepage": "https://gitcdn.xyz"
 }
