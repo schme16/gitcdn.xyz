@@ -121,7 +121,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		else {
 			scheme = 'https'
 		}
-		return `${scheme}://${host}/cdn/${meta.owner}/${meta.repo}${(meta.gist ? '/raw' : '')}/${sha}/${meta.filePath}`
+		return `${scheme}://${host}/cdn/${meta.owner}/${meta.repo}${(meta.gist ? '/raw' : '')}/${sha}/${meta.filePath}${meta.querystring.length > 0 ? '?' + meta.querystring : ''}`
 	},
 
 	//Serves the favicon accounting for it being pre gzipped
@@ -191,9 +191,11 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		//The cache ID for this repo
 		meta.cacheID = `${meta.owner}/${meta.repo}/${meta.branch}`
 				
-		//Add the file we're asking for
-		meta.filePath = meta.raw.join('/')
-		
+		//Add the file we're asking for, and remove the querystring
+		meta.filePath = meta.raw.join('/').split('?')[0]
+	
+		//Add the querystring, if any 
+		meta.querystring = meta.raw.join('/').split('?')[1] || '' 
 		meta.fetchUrl = (meta.gist ? gistURL : rawURL) + '/' + meta.owner + '/' + meta.repo + (meta.gist ? '/raw' : '') + '/' +  meta.branch + '/' + meta.filePath
 		
 		//Defaults to no blacklisted
@@ -245,7 +247,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 				if (meta.gist) {
 					lastCall(meta, meta.branch, req, res)
 				}
-				else {
+				else if (meta.filePath) {
 					if (!meta.isHash) {
 						git.listRemote([`https://github.com/${meta.owner}/${meta.repo}`, 'HEAD'], (err, response) => {
 							if (err) {
@@ -262,9 +264,11 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 						})
 					}
 					else {
-						
 						lastCall(meta, meta.branch, req, res)
 					}
+				}
+				else {
+					sendError(res, meta, 412)
 				}
 			}
 		}
@@ -279,7 +283,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 			res.status(403).send("Forbidden - This repo/gist is on the blacklist. If you wish to appeal, please open an issue here: https://github.com/schme16/gitcdn.xyz/issues, with why you feel this repo should not be on the blacklist.")
 			return false
 		}
-		else {
+		else if (meta.filePath) {
 			//TODO: re-write the data fetch request
 			req.pipe(http.request(meta.fetchUrl, (newRes)  => {
 				if (newRes.statusCode === 200) {
@@ -303,6 +307,9 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 				//Log that this client got a strike
 				console.log(new Error('Status 500: couldn\'t pipe file to client: ' + meta.fetchUrl))
 			}))
+		}
+		else {
+			sendError(res, meta, 412)
 		}
 	},
 
