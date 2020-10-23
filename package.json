@@ -11,8 +11,8 @@
     "simple-git": "^2.21.0"
   },
   "engines": {
-    "node": ">= 12",
-    "npm": ">= 6"
+    "node": "> 12",
+    "npm": "> 6"
   },
   "devDependencies": {},
   "bundleDependencies": [],
