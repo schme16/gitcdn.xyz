@@ -181,12 +181,12 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		if (meta.gist) meta.raw.shift()
 		
 		//Add the branch field
-		meta.branch = meta.raw.shift()
+		meta.branch = String(meta.raw.shift())
 		
 		//Is this an sha, or a branch?
 		//Does this by checking first length, then if its hex compatible
 		//Super naive, hopefully no one is using branch names that are only 0-9, a-f, and lowercase 40 characters long ...		
-		meta.isHash = meta.branch.length === 40 && meta.branch.match("[0-9a-f]+").length === 1
+		meta.isHash = meta.branch.length === 40 && (meta.branch.match("[0-9a-f]+") || []).length === 1
 		
 		//The cache ID for this repo
 		meta.cacheID = `${meta.owner}/${meta.repo}/${meta.branch}`
