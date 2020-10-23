@@ -6,11 +6,9 @@
 let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favicon.ico')), //load the favicon into memory, and gzip it. the memory footprint is small, and it saves disk reads
 	express = require('express'),
 	fs = require('fs'),
-	{ Octokit } = require("@octokit/rest"),
-	{ retry } = require("@octokit/plugin-retry"),
-	{ throttling } = require("@octokit/plugin-throttling"),
 	app = express(),
     request = require('request'),
+    git = require('simple-git')(),
 	cors = require('cors'),
 	port = process.env.PORT || 8080,
 	staticContent = express.static(process.cwd() + '/website'),
@@ -35,36 +33,6 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		'text/plain': '; charset=utf-8',
 		'application/json': '; charset=utf-8'
 	},
-
-	MyOctokit = Octokit.plugin(retry, throttling),
-	octokit = new MyOctokit({
-		auth: process.env.accessToken,
-		throttle: {
-			onRateLimit: (retryAfter, options) => {
-				myOctokit.log.warn(`Request quota exhausted for request ${options.method} ${options.url}`)
-
-				if (options.request.retryCount === 0) {
-					// only retries once
-					myOctokit.log.info(`Retrying after ${retryAfter} seconds!`)
-					return true
-				}
-			},
-			onAbuseLimit: (retryAfter, options) => {
-				// does not retry, only logs a warning
-				myOctokit.log.warn(`Abuse detected for request ${options.method} ${options.url}`)
-			},
-		},
-		log: {
-			debug: () => {},
-			info: () => {},
-			warn: console.warn,
-			error: console.error
-		},
-		timeZone: 'Australia/Brisbane',
-
-		userAgent: 'GitCDN.xyz 2.0.0',
-
-	}),
 
 	//Handles the strike counter
 	addStrike = (meta) => {
@@ -133,7 +101,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 	
 	//This handles all the occasional tasks, like cache clearing, strike management, garbage collection, etc
 	periodicChecks = () => {
-		
+	
 		//Clear the expires stuff 
 		clearExpiredStrikes()
 		clearExpiredCaches()
@@ -161,6 +129,20 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		res.setHeader('Content-Encoding', 'gzip')
 		res.setHeader('Content-Type', 'image/x-icon')
 		res.send(favicon)
+	},
+	
+	//Unify the error response system
+	sendError = (res, meta, status) => {
+		//Strip the cache properties... just in case
+		res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+		res.setHeader("Cache-Control", "public, max-age=0");
+		res.setHeader("Expires", new Date(Date.now() - 2592000000).toUTCString());
+		
+		console.log('Error code:', status, 'File: ', `${meta.owner}/${meta.repo}/${meta.branch}/${meta.filePath}`)
+		addStrike(meta)
+		
+		//Send the status code
+		res.sendStatus(status)
 	},
 	
 	//Fetch all the metadata for the requested url
@@ -191,8 +173,9 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		//The repo to look at
 		meta.repo = meta.raw.shift()
 		
+		
 		//Is this a gist?
-		meta.gist = (meta.raw[0] === 'raw' ? true : false)
+		meta.gist = meta.raw[0] === 'raw'
 		
 		//If it IS a gist add the raw field
 		if (meta.gist) meta.raw.shift()
@@ -200,6 +183,14 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		//Add the branch field
 		meta.branch = meta.raw.shift()
 		
+		//Is this an sha, or a branch?
+		//Does this by checking first length, then if its hex compatible
+		//Super naive, hopefully no one is using branch names that are only 0-9, a-f, and lowercase 40 characters long ...		
+		meta.isHash = meta.branch.length === 40 && meta.branch.match("[0-9a-f]+").length === 1
+		
+		//The cache ID for this repo
+		meta.cacheID = `${meta.owner}/${meta.repo}/${meta.branch}`
+				
 		//Add the file we're asking for
 		meta.filePath = meta.raw.join('/')
 		
@@ -229,7 +220,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 	repoFunc = (req, res)  => {
 	
 		let meta = getMeta(req.originalUrl), /*Define the meta data*/
-			cached = cache[meta.fetchUrl]
+			cached = cache[meta.cacheID]
 		
 		//Are they blacklisted? Cut them off
 		if (meta.blacklisted) {
@@ -255,25 +246,25 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 					lastCall(meta, meta.branch, req, res)
 				}
 				else {
-					octokit.repos.getCommit({
-						owner: meta.owner,
-						repo: meta.repo,
-						ref: 'master'
-					})
-					.then((commit) => {
-						let body = commit.data 
-						cache[meta.fetchUrl] = {
-							sha: body.sha,
-							timestamp: new Date().getTime()
-						}
-						lastCall(meta, body.sha, req, res)
-					})
-					.catch((err) => {
-						console.log('Error status:', err.status || ' 404 -', meta.filePath)
-						addStrike(meta)
-						if (err) res.sendStatus(404)
+					if (!meta.isHash) {
+						git.listRemote([`https://github.com/${meta.owner}/${meta.repo}`, 'HEAD'], (err, response) => {
+							if (err) {
+								sendError(res, meta, 404)
+							}
+							else {
+								let sha = response.split(`\t`)[0]
+								cache[meta.cacheID] = {
+									sha: sha,
+									timestamp: new Date().getTime()
+								}
+								lastCall(meta, sha, req, res)
+							}
+						})
+					}
+					else {
 						
-					})
+						lastCall(meta, meta.branch, req, res)
+					}
 				}
 			}
 		}
@@ -291,24 +282,23 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		else {
 			//TODO: re-write the data fetch request
 			req.pipe(http.request(meta.fetchUrl, (newRes)  => {
-
-				let mimeType = mime.lookup(meta.filePath)
-				res.setHeader('Content-Type', mimeType + (charsetOverrides[mimeType] || ''))
-				res.setHeader("Cache-Control", "public, max-age=2592000");
-				res.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());
-				newRes.pipe(res)
+				if (newRes.statusCode === 200) {
+					let mimeType = mime.lookup(meta.filePath)
+					res.setHeader('Content-Type', mimeType + (charsetOverrides[mimeType] || ''))
+					res.setHeader("Cache-Control", "public, max-age=2592000");
+					res.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());
+					newRes.pipe(res)
+				}
+				else {
+					sendError(res, meta, newRes.statusCode)
+				}
 	
 			}).on('error', (err) => {
 				
 				//Give them a strike
 				addStrike(meta)
 				
-				//Strip the cache properties... just in case
-				res.setHeader("Cache-Control", "public, max-age=0");
-				res.setHeader("Expires", new Date(Date.now() - 2592000000).toUTCString());
-				
-				//Send the 500 code
-				res.sendStatus(500)
+				sendError(res, meta, 500)
 				
 				//Log that this client got a strike
 				console.log(new Error('Status 500: couldn\'t pipe file to client: ' + meta.fetchUrl))
@@ -323,7 +313,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 			res.redirect(301, newUrl)
 		}
 		else {
-			res.sendStatus(404)
+			sendError(res, meta, 404)
 		}
 	}
 
@@ -344,7 +334,12 @@ app.use('/repo/*', repoFunc)
 //Load the blacklist cache file, if it exists
 fs.readFile(__dirname + '/blacklist.json', (err, data) => {
 	if (!err) {
-		blacklist = JSON.parse(data)
+		try {
+			blacklist = JSON.parse(data)
+		}
+		catch(e) {
+			blacklist = []
+		}
 	}
 	else {
 		blacklist = []
@@ -356,7 +351,12 @@ fs.readFile(__dirname + '/blacklist.json', (err, data) => {
 	//Now load the strikes
 	fs.readFile(__dirname + '/strikes.json', (err, data) => {
 		if (!err) {
-			strikes = JSON.parse(data)
+			try {
+				strikes = JSON.parse(data)
+			}
+			catch(e) {
+				strikes = []
+			}
 		}
 		else {
 			strikes = []
@@ -365,7 +365,12 @@ fs.readFile(__dirname + '/blacklist.json', (err, data) => {
 		//Finally, load the caches
 		fs.readFile(__dirname + '/caches.json', (err, data) => {
 			if (!err) {
-				cache = JSON.parse(data)
+				try {
+					cache = JSON.parse(data)
+				}
+				catch(e) {
+					cache = []
+				}
 			}
 			else {
 				cache = []

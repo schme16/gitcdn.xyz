@@ -14,29 +14,13 @@
     <e p="C:\Users\U1038447\AppData\Local\JetBrains\Rider2020.2\resharper-host\Local\Transient\Rider\v202\SolutionCaches\_.19.00" t="ExcludeRecursive" />
     <e p="C:\Users\U1038447\AppData\Roaming\JetBrains\Rider2020.2\scratches" t="IncludeRecursive" />
     <e p="C:\Users\U1038447\Desktop\gitcdn.xyz" t="IncludeFlat">
-      <e p="node_modules\@octokit\auth-token" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\core" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\endpoint" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\graphql" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\plugin-paginate-rest" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\plugin-request-log" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\plugin-rest-endpoint-methods" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\plugin-retry" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\plugin-throttling" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\request" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\request-error" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\rest" t="IncludeRecursive" />
-      <e p="node_modules\@octokit\types" t="IncludeRecursive" />
-      <e p="node_modules\@types" t="IncludeRecursive" />
-      <e p="node_modules\before-after-hook" t="IncludeRecursive" />
-      <e p="node_modules\bottleneck" t="IncludeRecursive" />
+      <e p="node_modules\@kwsites\file-exists" t="IncludeRecursive" />
+      <e p="node_modules\@kwsites\promise-deferred" t="IncludeRecursive" />
       <e p="node_modules\cors" t="IncludeRecursive" />
-      <e p="node_modules\deprecation" t="IncludeRecursive" />
       <e p="node_modules\express" t="IncludeRecursive" />
-      <e p="node_modules\is-plain-object" t="IncludeRecursive" />
       <e p="node_modules\mime" t="IncludeRecursive" />
       <e p="node_modules\request" t="IncludeRecursive" />
-      <e p="node_modules\universal-user-agent" t="IncludeRecursive" />
+      <e p="node_modules\simple-git" t="IncludeRecursive" />
     </e>
   </component>
 </project>
