@@ -134,12 +134,12 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 	},
 	
 	//Unify the error response system
-	sendError = (res, meta, status) => {
+	sendError = (res, meta, status, error) => {
 		//Strip the cache properties... just in case
 		res.setHeader('Content-Type', 'text/plain; charset=utf-8')
 		res.setHeader("Cache-Control", "public, max-age=0");
 		res.setHeader("Expires", new Date(Date.now() - 2592000000).toUTCString());
-		
+						
 		console.log('Error code:', status, 'File: ', `${meta.owner}/${meta.repo}/${meta.branch}/${meta.filePath}`)
 		addStrike(meta)
 		
@@ -308,10 +308,9 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 				//Give them a strike
 				addStrike(meta)
 				
-				sendError(res, meta, 500)
-				
-				//Log that this client got a strike
-				console.log(new Error('Status 500: couldn\'t pipe file to client: ' + meta.fetchUrl))
+				//Send the error message
+				sendError(res, meta, 500, err)
+
 			}))
 		}
 		else {
