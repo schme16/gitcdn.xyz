@@ -20,6 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ffb86b40-ab73-4712-83e0-c73e3c570560" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.gitcdn.xyz.dir/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.gitcdn.xyz.dir/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.gitcdn.xyz.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.gitcdn.xyz.dir/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -49,9 +51,9 @@
         <option value="$PROJECT_DIR$/gitcdn-button.js" />
         <option value="$PROJECT_DIR$/gitcdn-button.user.js" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/test.js" />
-        <option value="$PROJECT_DIR$/caches.json" />
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/website/index.html" />
+        <option value="$PROJECT_DIR$/caches.json" />
         <option value="$PROJECT_DIR$/index.js" />
       </list>
     </option>

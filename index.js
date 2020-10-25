@@ -121,7 +121,9 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		else {
 			scheme = 'https'
 		}
-		return `${scheme}://${host}/cdn/${meta.owner}/${meta.repo}${(meta.gist ? '/raw' : '')}/${sha}/${meta.filePath}${meta.querystring.length > 0 ? '?' + meta.querystring : ''}`
+		
+		let newUrl = `${scheme}://${host}/cdn/${meta.owner}/${meta.repo}${(meta.gist ? '/raw' : '')}${sha ? '/' + sha : ''}/${meta.filePath}${meta.querystring.length > 0 ? '?' + meta.querystring : ''}`
+		return newUrl 
 	},
 
 	//Serves the favicon accounting for it being pre gzipped
@@ -179,9 +181,13 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		
 		//If it IS a gist add the raw field
 		if (meta.gist) meta.raw.shift()
-		
 		//Add the branch field
-		meta.branch = String(meta.raw.shift())
+		if (!meta.gist || (!!meta.gist && meta.raw[0].length === 40 && ((meta.raw[0] || '').match("[0-9a-f]+") || []).length === 1)) {
+			meta.branch = String(meta.raw.shift())
+		}
+		else if (meta.gist) {
+			meta.branch = false
+		}
 		
 		//Is this an sha, or a branch?
 		//Does this by checking first length, then if its hex compatible
@@ -196,8 +202,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 	
 		//Add the querystring, if any 
 		meta.querystring = meta.raw.join('/').split('?')[1] || '' 
-		meta.fetchUrl = (meta.gist ? gistURL : rawURL) + '/' + meta.owner + '/' + meta.repo + (meta.gist ? '/raw' : '') + '/' +  meta.branch + '/' + meta.filePath
-		
+		meta.fetchUrl = `${(meta.gist ? gistURL : rawURL)}/${meta.owner}/${meta.repo}${(meta.gist ? '/raw' : '')}${meta.branch ? '/' + meta.branch : ''}/${meta.filePath}`
 		//Defaults to no blacklisted
 		meta.blacklisted = false 
 			
@@ -232,7 +237,8 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 		
 		//Not blacklisted? But missing info? Send a 404, add a strike
 		else if ((!meta.repo && !meta.owner) && !meta.gist) {
-			res.sendStatus(404)
+			
+			sendError(res, meta, 404)
 			return false
 		}
 		else {
@@ -315,7 +321,7 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
 
 	//Handles redirection
 	lastCall = (meta, sha, req, res)  => {
-		if (sha) {
+		if (sha || (!sha && meta.gist)) {
 			let newUrl = createRedirectUrl(req, req.headers, meta, sha)
 			res.redirect(301, newUrl)
 		}

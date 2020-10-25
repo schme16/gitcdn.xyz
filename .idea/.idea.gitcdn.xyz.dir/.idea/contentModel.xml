@@ -12,6 +12,14 @@
     <e p="C:\Users\ShaneGadsby\AppData\Local\JetBrains\Rider2020.2\javascript\typings\express\4.17.1\node_modules\@types\range-parser" t="IncludeRecursive" />
     <e p="C:\Users\ShaneGadsby\AppData\Local\JetBrains\Rider2020.2\javascript\typings\express\4.17.1\node_modules\@types\serve-static" t="IncludeRecursive" />
     <e p="C:\Users\ShaneGadsby\AppData\Local\JetBrains\Rider2020.2\resharper-host\Local\Transient\Rider\v202\SolutionCaches\_.19.00" t="ExcludeRecursive" />
-    <e p="C:\Users\ShaneGadsby\Desktop\gitcdn.xyz" t="IncludeFlat" />
+    <e p="C:\Users\ShaneGadsby\Desktop\gitcdn.xyz" t="IncludeFlat">
+      <e p="node_modules\@kwsites\file-exists" t="IncludeRecursive" />
+      <e p="node_modules\@kwsites\promise-deferred" t="IncludeRecursive" />
+      <e p="node_modules\cors" t="IncludeRecursive" />
+      <e p="node_modules\express" t="IncludeRecursive" />
+      <e p="node_modules\mime" t="IncludeRecursive" />
+      <e p="node_modules\request" t="IncludeRecursive" />
+      <e p="node_modules\simple-git" t="IncludeRecursive" />
+    </e>
   </component>
 </project>
