@@ -51,7 +51,7 @@
             devEl.classList.remove('invalid');
 
 
-            setDevURLValue(repoDomain + '/' + base);
+            setDevURLValue(cdnDomain + '/' + base);
 
         }
 
