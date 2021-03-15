@@ -9,7 +9,7 @@
         button.classList.add('btn-clipboard');
         button.classList.add('hidden');
         button.setAttribute('aria-label','Copy code to clipboard');
-        button.innerHTML = clipboardIcon + '<strong class="btn-clipboard__label">Copy</strong>';
+        button.innerHTML = clipboardIcon + '<strong class="btn-clipboard__label waves-effect waves-light btn">Copy</strong>';
 
         inputElem.parentElement.appendChild(button);
 
