@@ -10,7 +10,14 @@ let favicon = require('zlib').gzipSync(require('fs').readFileSync('website/favic
     request = require('request'),
     cors = require('cors')(),
     port = process.env.PORT || 8080,
+    /*Website Static Content Serving*/
     staticContent = express.static(process.cwd() + '/website'),
+    staticContentAbout = express.static(process.cwd() + '/website/about'),
+    staticContentDonate = express.static(process.cwd() + '/website/donate'),
+    staticContentFAQ = express.static(process.cwd() + '/website/faq'),
+    staticContentCDN = express.static(process.cwd() + '/website/cdn'),
+    staticContentBlog = express.static(process.cwd() + '/website/blog'),
+    staticContentSource = express.static(process.cwd() + '/website/open-source'),
     http = require('https'),
     mime = require('mime'),
     rawURL = 'https://raw.githubusercontent.com',
@@ -226,6 +233,18 @@ app.set('etag', 'strong') // use strong etags
 
 app.use('/favicon.ico', faviconFunc)//Serve the site icon
 app.use('/', staticContent)
+app.use('/About', staticContentAbout)
+app.use('/FAQ', staticContentFAQ)
+app.use('/Donate', staticContentDonate)
+app.use('/Blog', staticContentBlog)
+app.use('/CDN', staticContentCDN)
+app.use('/Open-Source', staticContentSource)
+app.use('/about', staticContentAbout)
+app.use('/faq', staticContentFAQ)
+app.use('/donate', staticContentDonate)
+app.use('/blog', staticContentBlog)
+app.use('/cdn', staticContentCDN)
+app.use('/open-source', staticContentSource)
 app.use(cors)
 app.get('/cdn/*', cdnFunc)
 app.use('/repo/*', repoFunc)
