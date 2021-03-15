@@ -1,6 +1,9 @@
-<!doctype html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="description" content="GitCDN.xyz serves raw files directly from GitHub with proper Content-Type headers and super  fast CDN!">
@@ -14,30 +17,74 @@
 
 	<link rel="stylesheet" href="sys/css/base.css">
 	<title>GitCDN - A powerful CDN for Github files</title>
+      <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">      <!--Import materialize.css-->
+
+     <!-- Compiled and minified CSS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
+     <!-- Compiled and minified JavaScript -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+             
+    <title>Document</title>
+    <base href="https://cdn-git.herokuapp.com/">
 </head>
-
 <body>
-	<a href="https://github.com/schme16/gitcdn.xyz" title="View source on Github" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
-	<div class="bd">
-	    <div class="content">
-	        <p class="hero">
-				<strong>GitCDN</strong> serves raw files directly from GitHub with proper <strong>Content-Type</strong> headers and a super fast CDN!
-			</p>
 
-			<div class="pure-g-r url-helper">
-			    <div class="pure-u-1">
-			        <p id="url-form">
-			            <label for="url" class="offscreen">GitHub URL:</label>
-			            <input id="url" class="url" type="url" placeholder="Paste a link to a raw GitHub file" autofocus>
-			        </p>
-			    </div>*
+    <nav class="nav-extended teal accent-3 z-depth-4">
+        <div class="nav-wrapper">
+          <a href="#" class="brand-logo"> GitCDN</a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="/about">About</a></li>
+            <li><a href="/cdn">CDN</a></li>
+            <li><a href="/open-source">Source</a></li>
+            <li><a href="/faq">FAQ</a></li>
+            <li><a href="/donate"><span class="material-icons">
+                offline_bolt
+                </span> Donate</a></li>
+          </ul>
+        </div>
+        <div class="nav-content">
+          <ul class="tabs tabs-transparent">
+            <li class="tab" id='mode-dev'><a href="#dev">For Development</a></li>
+            <li class="tab active" id='mode-prod'><a href="#prod">For Production</a></li>
+          </ul>
+        </div>
+      </nav>
+    
+      <ul class="sidenav" id="mobile-demo">
+        <li><a href="/about">About</a></li>
+        <li><a href="/cdn-links">CDN</a></li>
+        <li><a href="/open-source">Source</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/donate">
+            <span class="material-icons">
+            offline_bolt
+            </span> Donate</a></li>
+      </ul>
+      <div class="col s12">
+	<div class="container">
+			<div class="row url-helper">
+			    <div class="row">      
+                    <div id="test1" class="col s12">
+                    <div class="content">
+                        <h3 class="hero">
+                            <strong>GitCDN</strong> serves raw files directly from GitHub with proper <strong>Content-Type</strong> headers and a super fast CDN!
+                        </h3>
+                </div>
+                    <div class="input-field col s12">
+                        <input id="url" type="text" class="validate" placeholder="Paste the Link to Raw GitHub File">
+                        <label for="url">GitHub URL</label>
+                      </div>
+			    </div>
 
-			    <div class="column pure-u-1-1">
-			        <h2>Use this URL to always get the latest commit</h2>
+			    <div class="col s12 flow-text center-align">
+			        Use this URL for Latest Commit
 
-			        <p class="target-url-container">
+			        <p class="input-field col s12">
+                        
 			        <input id="url-dev" class="url" placeholder="user/repo/master/file" readonly>
-			        <script>
+                    <script>
 			        	document.querySelector('[readonly]').placeholder = location.href + document.querySelector('[readonly]').placeholder
 			        </script>
 			        </p>
@@ -45,16 +92,62 @@
 			    </div>
 			</div>
 	    </div>
-
-	<footer class="ft">
-	    <p>
-	    	&copy; 2019 <a href="http://twitter.com/schme16">@schme16</a>.<br>
-	    	This service is open source, you can contribute to it at <a href="https://github.com/schme16/gitcdn.xyz">https://github.com/schme16/gitcdn.xyz</a><br>
-	    	Special thanks to <a href="http://wonko.com/">Ryan Grove</a> for RawGit!
-	    </p>
-	</footer>
+        <div class="col s12 container center-align">
+            <span class="material-icons red-text lighten-4">
+                cloud
+                </span>
+        </div>
+<div class="col s12 center-align hidden">
+<div class="col s6" id='purge'></div>
+<div class="col s6" id='report'></div>
+</div>
+      </div>
+<hr>
+      
+<footer class="page-footer teal accent-3">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">GitCDN</h5>
+          <p class="grey-text text-lighten-4 col s12">
+            This service is <a href="https://opensource.org/licenses/GPL-3.0">Open Source</a>, you can contribute to <a href="https://github.com/schme16/gitcdn.xyz">here</a>.<br>
+	    	Inspired By <a href="http://wonko.com/">Ryan Grove's</a> RawGit !
+           <br> Served with <img class="materialboxed inline" width="65" src="https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg">
+          </p>
+        </div>
+        <div class="col l4 offset-l2 s12">
+          <h5 class="white-text">Links</h5>
+          <ul>
+            <li><a class="grey-text text-lighten-3" href="/about">About</a></li>
+            <li><a class="grey-text text-lighten-3" href="#purge">Purge Cache</a></li>
+            <li><a class="grey-text text-lighten-3" href="/faq">FAQ</a></li>
+            <li><a class="grey-text text-lighten-3" href="/donate">Donate</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      © 2021 Copyright <a href="http://twitter.com/schme16">@schme16</a>
+      <a class="grey-text text-lighten-4 right" href="#report">Report Abuse</a>
+      </div>
+    </div>
+  </footer>
 	<script src="sys/js/url-formatter.js" defer async="true"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js"></script>
 	<script src="sys/js/clipboard.js"></script>
+      <script>
+  $(document).ready(function(){
+    $('.sidenav').sidenav();
+  });
+  document.getElementById('mode-dev').addEventListener('click',function () {
+    document.getElementById('mode-dev').classList.add('active');
+    document.getElementById('mode-prod').classList.remove('active');
+  })
+  document.getElementById('mode-prod').addEventListener('click',function () {
+    document.getElementById('mode-prod').classList.add('active');
+    document.getElementById('mode-dev').classList.remove('active');
+  })
+          </script>
 </body>
 </html>
