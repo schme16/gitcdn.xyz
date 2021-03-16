@@ -16,7 +16,7 @@
 	<link rel="canonical" href="https://gitcdn.xyz" />
 
 	<link rel="stylesheet" href="sys/css/base.css">
-	<title>GitCDN - A powerful CDN for Github files</title>
+	<title>GitCDN - A Powerful CDN for Github files</title>
       <!--Import Google Icon Font-->
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">      <!--Import materialize.css-->
 
@@ -25,15 +25,21 @@
      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
      <!-- Compiled and minified JavaScript -->
      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-             
-    <title>Document</title>
-    <base href="https://cdn-git.herokuapp.com/">
+      <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+      <style>
+        #focus{
+          display: none;
+        }
+        #purge:focus{
+          display: block;
+        }
+      </style>
 </head>
 <body>
-
-    <nav class="nav-extended teal accent-3 z-depth-4">
+    <nav class="nav-extended teal accent-3">
         <div class="nav-wrapper">
           <a href="#" class="brand-logo"> GitCDN</a>
+      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="/about">About</a></li>
             <li><a href="/cdn">CDN</a></li>
@@ -51,7 +57,6 @@
           </ul>
         </div>
       </nav>
-    
       <ul class="sidenav" id="mobile-demo">
         <li><a href="/about">About</a></li>
         <li><a href="/cdn-links">CDN</a></li>
@@ -91,18 +96,75 @@
 			    </div>
 			
 	    </div>
-        <div class="col s12 container center-align">
-            <span class="material-icons red-text lighten-4">
-                cloud
+        <div class="col s12 container center-align bold">
+            <span class="material-icons grey-text lighten-4">
+              keyboard_arrow_down
                 </span>
         </div>
-<div class="col s12 center-align hidden">
-<div class="col s6" id='purge'></div>
-<div class="col s6" id='report'></div>
+<div class="col s12 center-align">
+<div class="col s6" id='purge' onmouseover="document.getElementById('purge-id').removeAttribute('hidden')">
+  <textarea type="text" id='purge-id' hidden></textarea>
+</div>
+<div class="col s6" id='report'>
+  <textarea type="text" id='purge-id' hidden></textarea>
+</div>
 </div>
       </div>
+      <h1></h1>
 <hr>
-      
+      <div class="container">
+      <div class="row">
+        <div class="left col s6">
+        <img src="file:///C:/Users/nabard/Downloads/undraw_aircraft_fbvl%20(1).svg" class="responsive-img" alt=""></div>
+        <h1>On-the-fly <span class="teal-text">Minification</span></h1>
+        <h7 class="grey-text text"><span class="material-icons red-text accent-4">https
+        </span><span>min.gitcdn.link/~path/to/your/.js.css</span></h7><br>
+        <a href="/faq">Learn More</a>
+
+        <div style="height: 200px;"></div>
+        <div class="right col s6">
+          <img src="file:///C:/Users/nabard/Downloads/undraw_server_push_vtms%20(1).svg" class="responsive-img" alt=""></div>
+          <h1>Always get the <span class="teal-text">Latest Commmit</span></h1>
+          <h7 class="grey-text text"><span class="material-icons purple-text accent-4">https
+          </span><span>gitcdn.link/~path/to/your/file</span></h7><br>
+          <a href="/faq">Learn More</a>
+        <div style="height: 200px;"></div>
+        <div class="left col s6">
+          <img src="file:///C:/Users/nabard/Downloads/undraw_slider_5bgj.svg" class="responsive-img" alt=""></div>
+          <h1>Give your site <span class="teal-text">Speed</span></h1>
+          <h7 class="grey-text text"><span class="material-icons yellow-text accent-4">flash_on
+          </span>
+          <span>www.yoursite.com/go-fast-with-GitCDN</span></h7><br>
+          <a href="/blog">Learn More</a>
+
+          <div style="height: 200px;"></div>
+          <div class="right col s6">
+            <img src="file:///C:/Users/nabard/Downloads/undraw_Options_re_9vxh.svg" class="responsive-img" alt=""></div>
+            <h1>Developer Friendly.<span class="teal-text">Easy Deployment.</span></h1>
+            <h7 class="grey-text text"><span class="material-icons grey-text accent-4">chrome_reader_mode
+            </span>
+            <span>www.yoursite.com/built-fast-with-GitCDN</span></h7><br>
+            <a href="/doc">Learn More</a>
+            
+          <div style="height: 200px;"></div>
+          <div class="right col s6">
+            <img src="file:///C:/Users/nabard/Downloads/undraw_To_the_stars_qhyy.svg" class="responsive-img" alt=""></div>
+            <h1>Reduce CDN Costs<span class="teal-text"></span></h1>
+            <h7 class="grey-text text"><span class="material-icons yellow-text accent-4">monetization_on
+            </span>
+            <span>www.yoursite.com/saved-money-with-GitCDN</span></h7><br>
+            <a href="/blog">Learn More</a>
+            
+          <div style="height: 200px;"></div>
+          <div class="left col s6">
+            <img src="file:///C:/Users/nabard/Downloads/undraw_open_source_1qxw.svg" class="responsive-img" alt=""></div>
+            <h1>Totally Open-Source.<span class="teal-text">And Secure</span></h1>
+            <h7 class="grey-text text"><span class="material-icons pink-text accent-4">chat_bubble_outline
+            </span>
+            <span>github.com/scheme16/gitcdn.xyz</span></h7><br>
+            <a href="/open-source">Contribute</a>
+      </div>
+      </div>
 <footer class="page-footer teal accent-3">
     <div class="container">
       <div class="row">
@@ -147,6 +209,7 @@
     document.getElementById('mode-prod').classList.add('active');
     document.getElementById('mode-dev').classList.remove('active');
   })
+
           </script>
 </body>
 </html>
