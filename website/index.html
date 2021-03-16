@@ -86,7 +86,7 @@
                         
 			        <input id="url-dev" class="url" placeholder="user/repo/master/file" readonly>
                     <script>
-			        	document.querySelector('[readonly]').placeholder = location.href + document.querySelector('[readonly]').placeholder
+			        	document.querySelector('[readonly]').placeholder = 'https://'+location.hostname + location.pathname + document.querySelector('[readonly]').placeholder
 			        </script>
 			        </p>
 
