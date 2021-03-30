@@ -3,17 +3,18 @@
 
     function initClipboard() {
         var inputElem = document.querySelector('#url-dev');
-        var clipboardIcon = '<svg height="32" viewBox="-40 0 512 512" width="32" fill="white" xmlns="http://www.w3.org/2000/svg" id="fi_1621635"><path d="m271 512h-191c-44.113281 0-80-35.886719-80-80v-271c0-44.113281 35.886719-80 80-80h191c44.113281 0 80 35.886719 80 80v271c0 44.113281-35.886719 80-80 80zm-191-391c-22.054688 0-40 17.945312-40 40v271c0 22.054688 17.945312 40 40 40h191c22.054688 0 40-17.945312 40-40v-271c0-22.054688-17.945312-40-40-40zm351 261v-302c0-44.113281-35.886719-80-80-80h-222c-11.046875 0-20 8.953125-20 20s8.953125 20 20 20h222c22.054688 0 40 17.945312 40 40v302c0 11.046875 8.953125 20 20 20s20-8.953125 20-20zm0 0"></path></svg>';
+        var clipboardIcon = '<svg height="32" viewBox="-40 0 512 512" width="32" fill="#fff" xmlns="http://www.w3.org/2000/svg" id="fi_1621635"><path d="m271 512h-191c-44.113281 0-80-35.886719-80-80v-271c0-44.113281 35.886719-80 80-80h191c44.113281 0 80 35.886719 80 80v271c0 44.113281-35.886719 80-80 80zm-191-391c-22.054688 0-40 17.945312-40 40v271c0 22.054688 17.945312 40 40 40h191c22.054688 0 40-17.945312 40-40v-271c0-22.054688-17.945312-40-40-40zm351 261v-302c0-44.113281-35.886719-80-80-80h-222c-11.046875 0-20 8.953125-20 20s8.953125 20 20 20h222c22.054688 0 40 17.945312 40 40v302c0 11.046875 8.953125 20 20 20s20-8.953125 20-20zm0 0"></path></svg>';
 
         var button = document.createElement('button');
         button.classList.add('btn-clipboard');
         button.classList.add('waves-effect');
         button.classList.add('waves-light');
         button.classList.add('teal');
-        button.classList.add('lighten-3');
+        button.classList.add('darken-3');
         button.classList.add('btn');
         button.classList.add('hidden');
         button.setAttribute('aria-label','Copy code to clipboard');
+        button.setAttribute('style','border-radius:10px');
         button.innerHTML = clipboardIcon + '<span class="btn-clipboard__label">Copy</span>';
 
         inputElem.parentElement.appendChild(button);
