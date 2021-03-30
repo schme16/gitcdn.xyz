@@ -14,15 +14,20 @@
 	<meta property="og:url" content="https://gitcdn.xyz">
 	<meta property="og:image" content="https://gitcdn.herokuapp.com/sys/img/site.jpg">
 	<link rel="canonical" href="https://gitcdn.xyz" />
+	<link rel="stylesheet" href="sys/css/base.css">
+
 	<title>GitCDN - A Powerful CDN for Github files</title>
       <!--Import Google Icon Font-->
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">      <!--Import materialize.css-->
+      <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100;400&family=Poppins:ital,wght@0,300;1,100&display=swap" rel="stylesheet">
 
      <!-- Compiled and minified CSS -->
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
      <!-- Compiled and minified JavaScript -->
      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+      <link rel="shortcut icon" href="logo.png" type="image/x-icon">
       <style>
         #focus{
           display: none;
@@ -30,12 +35,20 @@
         #purge:focus{
           display: block;
         }
+        nav,footer{
+          font-family: 'Lexend', sans-serif;
+        }
+        body{
+          
+font-family: 'Poppins', sans-serif;
+        }
       </style>
 </head>
 <body>
-    <nav class="nav-extended teal accent-3">
+    <nav class="nav-extended indigo darken-3 darkmode-ignore" id='nav'>
         <div class="nav-wrapper">
-          <a href="#" class="brand-logo"> GitCDN</a>
+      <a href="#" class="brand-logo"><i>
+        <img src="/favicon.ico" height="64px" alt=""></i> GitCDN</a>
       <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="/about">About</a></li>
@@ -49,8 +62,8 @@
         </div>
         <div class="nav-content">
           <ul class="tabs tabs-transparent">
-            <li class="tab" id='mode-dev'><a href="#dev">For Development</a></li>
-            <li class="tab active" id='mode-prod'><a href="#prod">For Production</a></li>
+            <li class="tab" id='mode-dev'><a href="#dev"> <img src="https://img.icons8.com/fluent/2x/sugarcane.png" style="height: 32px;" alt=""> For Development</a></li>
+            <li class="tab active" id='mode-prod'><a href="#prod"><img src="https://img.icons8.com/color/2x/christmas-tree.png" style="height: 32px;" alt="">For Production</a></li>
           </ul>
         </div>
       </nav>
@@ -70,7 +83,7 @@
                     <div id="test1" class="col s12">
                     <div class="content">
                         <h3 class="hero">
-                            <strong>GitCDN</strong> serves raw files directly from GitHub with proper <strong>Content-Type</strong> headers and a super fast CDN!
+                            <strong>Git<span class="orange-text darkmode-ignore">CDN</span></strong> serves raw files directly from GitHub with proper <strong class="orange-text darkmode-ignore">Content-Type</strong> headers and a <span class="indigo-text">Super Fast CDN</span>!
                         </h3>
                 </div>
                     <div class="input-field col s12">
@@ -86,7 +99,7 @@
                         
 			        <input id="url-dev" class="url" placeholder="user/repo/master/file" readonly>
                     <script>
-			        	document.querySelector('[readonly]').placeholder = 'https://'+location.hostname + location.pathname + document.querySelector('[readonly]').placeholder
+			        	document.querySelector('[readonly]').placeholder = location.href + document.querySelector('[readonly]').placeholder
 			        </script>
 			        </p>
 
@@ -94,9 +107,11 @@
 			
 	    </div>
         <div class="col s12 container center-align bold">
+          <a href="#features">
             <span class="material-icons grey-text lighten-4">
               keyboard_arrow_down
                 </span>
+          </a>
         </div>
 <div class="col s12 center-align">
 <div class="col s6" id='purge' onmouseover="document.getElementById('purge-id').removeAttribute('hidden')">
@@ -109,26 +124,26 @@
       </div>
       <h1></h1>
 <hr>
-      <div class="container">
+      <div class="container" id="features">
       <div class="row">
         <div class="left col s6">
-        <img src="/assets/aircraft.svg" class="responsive-img" alt=""></div>
-        <h1>On-the-fly <span class="teal-text">Minification</span></h1>
-        <h7 class="grey-text text"><span class="material-icons red-text accent-4">https
+        <img src="/assets/undraw_aircraft_fbvl%20(1).svg" class="responsive-img" alt=""></div>
+        <h1>On-the-fly <span class="orange-text">Minification</span></h1>
+        <h7 class="grey-text text"><span class="material-icons orange-text accent-4">https
         </span><span>min.gitcdn.link/~path/to/your/.js.css</span></h7><br>
         <a href="/faq">Learn More</a>
 
         <div style="height: 200px;"></div>
         <div class="right col s6">
-          <img src="/assets/server_push.svg" class="responsive-img" alt=""></div>
-          <h1>Always get the <span class="teal-text">Latest Commmit</span></h1>
+          <img src="/assets/undraw_developer_activity_bv83.svg" class="responsive-img" alt=""></div>
+          <h1>Always get the <span class="orange-text">Latest Commmit</span></h1>
           <h7 class="grey-text text"><span class="material-icons purple-text accent-4">https
           </span><span>gitcdn.link/~path/to/your/file</span></h7><br>
           <a href="/faq">Learn More</a>
         <div style="height: 200px;"></div>
         <div class="left col s6">
-          <img src="/assets/website_slider.svg" class="responsive-img" alt=""></div>
-          <h1>Give your site <span class="teal-text">Speed</span></h1>
+          <img src="/assets/undraw_site_content_ihgn.svg" class="responsive-img" alt=""></div>
+          <h1>Give your site <span class="orange-text">Speed</span></h1>
           <h7 class="grey-text text"><span class="material-icons yellow-text accent-4">flash_on
           </span>
           <span>www.yoursite.com/go-fast-with-GitCDN</span></h7><br>
@@ -136,8 +151,8 @@
 
           <div style="height: 200px;"></div>
           <div class="right col s6">
-            <img src="/assets/options.svg" class="responsive-img" alt=""></div>
-            <h1>Developer Friendly.<span class="teal-text">Easy Deployment.</span></h1>
+            <img src="/assets/undraw_ideation_re_8i2h.svg" class="responsive-img" alt=""></div>
+            <h1>Developer Friendly.<span class="orange-text">Easy Deployment.</span></h1>
             <h7 class="grey-text text"><span class="material-icons grey-text accent-4">chrome_reader_mode
             </span>
             <span>www.yoursite.com/built-fast-with-GitCDN</span></h7><br>
@@ -146,7 +161,7 @@
           <div style="height: 200px;"></div>
           <div class="right col s6">
             <img src="/assets/To_the_stars.svg" class="responsive-img" alt=""></div>
-            <h1>Reduce CDN Costs<span class="teal-text"></span></h1>
+            <h1>Reduce CDN Costs<span class="orange-text"></span></h1>
             <h7 class="grey-text text"><span class="material-icons yellow-text accent-4">monetization_on
             </span>
             <span>www.yoursite.com/saved-money-with-GitCDN</span></h7><br>
@@ -154,15 +169,15 @@
             
           <div style="height: 200px;"></div>
           <div class="left col s6">
-            <img src="/assets/open_source.svg" class="responsive-img" alt=""></div>
-            <h1>Totally Open-Source.<span class="teal-text">And Secure</span></h1>
+            <img src="/assets/undraw_open_source_1qxw.svg" class="responsive-img" alt=""></div>
+            <h1>Totally Open-Source.<span class="orange-text">And Secure</span></h1>
             <h7 class="grey-text text"><span class="material-icons pink-text accent-4">chat_bubble_outline
             </span>
             <span>github.com/scheme16/gitcdn.xyz</span></h7><br>
-            <a href="/assets/open-source">Contribute</a>
+            <a href="/open-source">Contribute</a>
       </div>
       </div>
-<footer class="page-footer teal accent-3">
+<footer class="page-footer black accent-3">
     <div class="container">
       <div class="row">
         <div class="col l6 s12">
@@ -188,12 +203,13 @@
       <div class="container">
       © 2021 Copyright <a href="http://twitter.com/schme16">@schme16</a>
       <a class="grey-text text-lighten-4 right" href="#report">Report Abuse</a>
+      <br>Designed By <a href="https://vednig.io/me" class="grey-text">vednig</a>
       </div>
     </div>
   </footer>
-	<script src="sys/js/url-formatter.js" defer async="true"></script>
+	<script src="/sys/js/url-formatter.js" defer async="true"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js"></script>
-	<script src="sys/js/clipboard.js"></script>
+	<script src="/sys/js/clipboard.js"></script>
       <script>
   $(document).ready(function(){
     $('.sidenav').sidenav();
@@ -207,6 +223,29 @@
     document.getElementById('mode-dev').classList.remove('active');
   })
 
-          </script>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+<script>
+
+const options = {
+  bottom: '64px', // default: '32px'
+  right: 'unset', // default: '32px'
+  left: '32px', // default: 'unset'
+  time: '0.5s', // default: '0.3s'
+  mixColor: '#fff', // default: '#fff'
+  backgroundColor: '#fff',  // default: '#fff'
+  buttonColorDark: '#100f2c',  // default: '#100f2c'
+  buttonColorLight: '#fff', // default: '#fff'
+  saveInCookies: true, // default: true,
+  label: '🌓', // default: ''
+  autoMatchOsTheme: true, // default: true,
+  buttonId:'dark'
+}
+
+const darkmode = new Darkmode(options);
+darkmode.showWidget();
+
+</script>
+
 </body>
 </html>
