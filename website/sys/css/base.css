@@ -286,7 +286,6 @@ pre { overflow-x: auto; }
 
 #url {
     font-size: 1.3em;
-    width: 80%;
 }
 
 @media (max-width: 975px) {
