@@ -376,8 +376,6 @@ pre { overflow-x: auto; }
 }
 
 .btn-clipboard svg {
-    margin-left: 0.25em;
-    margin-right: 0.25em;
 }
 
 .btn-clipboard__label {
