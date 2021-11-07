@@ -2,11 +2,11 @@
 
     "use strict";
 
-    var cdnDomain = 'https://' + (location.href.replace('http://', '').replace('https://', '') +'cdn'),
-        repoDomain = 'https://' + (location.href.replace('http://', '').replace('https://', '') + 'repo'),
+    var cdnDomain = 'https://' + (location.hostname + location.pathname +'cdn'),
+        repoDomain = 'https://' + (location.hostname + location.pathname + 'repo'),
 
-        gistCDNDomain = location.href.replace('http://', '').replace('https://', '') + 'gistcdn',
-        gistDomain = location.href.replace('http://', '').replace('https://', '') + 'gist',
+        gistCDNDomain = 'https://' + location.hostname + location.pathname + 'gistcdn',
+        gistDomain = 'https://' +location.hostname + location.pathname + 'gist',
 
         devEl  = document.getElementById('url-dev'),
         urlEl  = document.getElementById('url');
